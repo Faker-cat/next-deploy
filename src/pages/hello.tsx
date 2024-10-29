@@ -1,5 +1,5 @@
 
-export function ShowTableMessage() {
+export default function hello() {
   return (
     <>
       <h1>
