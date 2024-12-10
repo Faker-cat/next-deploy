@@ -1,4 +1,5 @@
 import axios from "axios";
+import { error } from "console";
 import { useEffect, useState } from "react";
 
 export default function Hello() {
@@ -7,7 +8,8 @@ export default function Hello() {
   useEffect(() => {
     async function getMessage() {
       try {
-        const url = "https://fast-api-deploy-inky.vercel.app";
+        const url = process.env.NEXT_PUBLIC_API_URL;
+        if(!url) throw new Error()
         const res = await axios.get(url);
         setMessage(res.data.message);
       } catch (err) {
@@ -25,13 +27,3 @@ export default function Hello() {
 }
 
 
-// export default function hello() {
-//   return (
-//     <>
-//       <h1>
-//         Hello World!!
-//       </h1>
-        
-//     </>
-//   );
-// }
