@@ -3,12 +3,7 @@ import { Button, useDisclosure } from "@chakra-ui/react";
 import supabase from "@/libs/supabase";
 
 
-import { Inter } from "next/font/google";
-import { MdBuild , MdCall } from "react-icons/md"
-import { Stack, VStack } from '@chakra-ui/react'
-import { Heading } from '@chakra-ui/react'
-import { Flex} from "@chakra-ui/react";
-import { useColorMode, useColorModeValue } from "@chakra-ui/react";
+import { Flex, Heading, useColorMode, useColorModeValue } from '@chakra-ui/react';
 
 export function LoginButton() {
   const { isOpen, onOpen, onClose } = useDisclosure();
