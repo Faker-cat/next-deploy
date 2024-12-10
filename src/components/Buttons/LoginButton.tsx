@@ -11,7 +11,7 @@ import { Flex} from "@chakra-ui/react";
 import { useColorMode, useColorModeValue } from "@chakra-ui/react";
 
 export function LoginButton() {
-  const { open, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   
 
   async function GetSession() {
