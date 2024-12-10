@@ -1,4 +1,4 @@
-import { Button, useDisclosure } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 
 import supabase from "@/libs/supabase";
 
@@ -6,12 +6,12 @@ import supabase from "@/libs/supabase";
 import { Flex, Heading, useColorMode, useColorModeValue } from '@chakra-ui/react';
 
 export function LoginButton() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   
 
   async function GetSession() {
 
-    const{data,error} = await supabase.auth.getSession()
+    const{data,/*error*/} = await supabase.auth.getSession()
     console.log(data)
 
   }

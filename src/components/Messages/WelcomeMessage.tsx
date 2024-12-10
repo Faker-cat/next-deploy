@@ -4,7 +4,7 @@ export function WelcomeMessage() {
   return (
     <>
       <Heading fontSize="6xl" fontWeight="extrabold">
-        Welcome to Faker's App !!
+        {`Welcome to Faker's App !!`}
       </Heading>
     </>
   );
