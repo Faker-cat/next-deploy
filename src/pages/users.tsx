@@ -1,7 +1,6 @@
-import { Center ,VStack } from "@chakra-ui/react";
+import { Center, VStack } from "@chakra-ui/react";
 import Head from "next/head";
 
-import UsersTable from "../components/UserTable/UsersTable";
 import { BackButton } from "@/components/Buttons/BackButton";
 
 export default function Home() {
@@ -13,7 +12,6 @@ export default function Home() {
       </Head>
       <Center>
         <VStack>
-        <UsersTable />
         <BackButton />
         </VStack>
       </Center>

@@ -1,6 +1,7 @@
 import { Center, VStack } from "@chakra-ui/react";
 import Head from "next/head";
 
+import { LogoutButton } from "@/components/Buttons/LogoutButton";
 import { ShowTableMessage } from "@/components/Messages/ShowTableMessage";
 
 
@@ -14,10 +15,7 @@ export default function Home() {
       <Center h="100vh">
         <VStack>
         <ShowTableMessage/>
-        {/* <LoginButton/> */}
-        {/* <UserTableButton/>
-        <ItemTableButton/>  
-        <LogoutButton />     */}
+        <LogoutButton />    
         </VStack>     
       </Center>
     </>
