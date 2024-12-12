@@ -1,10 +1,14 @@
 import { Heading } from "@chakra-ui/react";
 
-export function WelcomeMessage() {
+type WelcomeMessageProps = {
+  name: string;
+}
+
+export function WelcomeMessage(props: WelcomeMessageProps) {
   return (
     <>
       <Heading fontSize="6xl" fontWeight="extrabold">
-        {`Welcome to Faker's App !!`}
+        {`Welcome to ${props.name}'s App !!`}
       </Heading>
     </>
   );

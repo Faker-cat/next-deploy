@@ -1,9 +1,8 @@
 import Head from "next/head";
 
-import { Center, VStack } from "@chakra-ui/react";
-
-import { LoginButton } from "@/components/Buttons/LoginButton";
+import { BackButton } from "@/components/Buttons/BackButton";
 import { ShowTableMessage } from "@/components/Messages/ShowTableMessage";
+import { Center, VStack } from "@chakra-ui/react";
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +16,7 @@ export default function Home() {
       <Center h="100vh">
         <VStack>
           <ShowTableMessage />
-          {/* <BackButton/> */}
-          <LoginButton />
+          <BackButton/>
         </VStack>
       </Center>
     </>

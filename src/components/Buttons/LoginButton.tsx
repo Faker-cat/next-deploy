@@ -25,11 +25,8 @@ export function LoginButton() {
     <Flex height="50vh" alignItems="center" justifyContent="center">
     <Flex direction="column" background={formBackGround} p={12} rounded={6}>
         <Heading mb={6}>Log in</Heading>
-        {/* <Button colorScheme="blue"  variant='outline' as="a" onClick={() => supabase.auth.signInWithOAuth({ provider: "google" })}>
+        <Button colorScheme="blue"  variant='outline' as="a" onClick={() => supabase.auth.signInWithOAuth({ provider: "google" })}>
           Google
-        </Button> */}
-        <Button colorScheme="blue"  variant='outline' as="a" onClick={GetSession}>
-          Sessions
         </Button>
         <Button colorScheme="purple"  variant='outline' as="a" onClick={() => supabase.auth.signInWithOAuth({ provider: "github" })}>
           GitHub

@@ -1,8 +1,8 @@
 import "@/styles/globals.css";
+import { ChakraProvider } from '@chakra-ui/react';
 import type { AppProps } from "next/app";
-import { ChakraProvider } from '@chakra-ui/react'
-import { SessionProvider } from "../SessionProvider/SessionProvider";
 import { RecoilRoot } from "recoil";
+import { SessionProvider } from "../SessionProvider/SessionProvider";
 
 export default function App({ Component, pageProps }: AppProps) {
   return( 
