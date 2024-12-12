@@ -9,12 +9,12 @@ export function LoginButton() {
   // const { isOpen, onOpen, onClose } = useDisclosure();
   
 
-  async function GetSession() {
+  // async function GetSession() {
 
-    const{data,/*error*/} = await supabase.auth.getSession()
-    console.log(data)
+  //   const{data,/*error*/} = await supabase.auth.getSession()
+  //   console.log(data)
 
-  }
+  // }
 
   const { toggleColorMode } = useColorMode();
   const formBackGround = useColorModeValue("gray.100", "gray.700");
