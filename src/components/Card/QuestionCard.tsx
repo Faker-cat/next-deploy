@@ -20,10 +20,11 @@ type QuestionCardProps = {
   bookmarks: number;
   isLiked: boolean; // いいね状態
   isBookmarked: boolean; // ブックマーク状態
-  onToggleLike: () => void; // いいね切り替え関数
-  onToggleBookmark: () => void; // ブックマーク切り替え関数
+  onToggleLike: (e: React.MouseEvent) => void; // いいね切り替え関数（イベントを受け取る）
+  onToggleBookmark: (e: React.MouseEvent) => void; // ブックマーク切り替え関数（イベントを受け取る）
   onClick: () => void; // 詳細ページに遷移するためのクリックハンドラ
 };
+
 
 function truncateContent(content: string): string {
   const maxLength = 90; // 最大文字数
@@ -63,10 +64,12 @@ export function QuestionCard(props: QuestionCardProps) {
     >
       <VStack align="start" spacing={2}>
         {/* タイトル */}
+        <Box minW={"calc(100% - 110px)"} onClick={onClick}>
         <Text fontSize="lg" fontWeight="bold" color="teal.600">
           {title}
-        </Text>
-
+          </Text>
+          </Box>
+        <Box onClick={onClick}>
         {/* ユーザー名 */}
         <Text fontSize="sm" color="gray.500">
           投稿者: {is_anonymous ? "匿名" : user_name}
@@ -82,6 +85,7 @@ export function QuestionCard(props: QuestionCardProps) {
           <Text fontSize="md" color="gray.700">
             {truncateContent(content)}
           </Text>
+          </Box>
         </Box>
       </VStack>
 
@@ -93,7 +97,10 @@ export function QuestionCard(props: QuestionCardProps) {
             icon={isLiked ? <FaHeart color="red" /> : <FaRegHeart />}
             size="sm"
             variant="ghost"
-            onClick={onToggleLike}
+            onClick={(e) => {
+              e.stopPropagation(); // クリックイベントの伝播を停止
+              onToggleLike(e); // いいね切り替え
+            }}
             sx={{
               animation: isLiked ? `${popAnimation} 0.3s ease` : "none",
             }}
@@ -106,7 +113,10 @@ export function QuestionCard(props: QuestionCardProps) {
             icon={isBookmarked ? <FaBookmark color="orange" /> : <FaRegBookmark />}
             size="sm"
             variant="ghost"
-            onClick={onToggleBookmark}
+            onClick={(e) => {
+              e.stopPropagation(); // クリックイベントの伝播を停止
+              onToggleBookmark(e); // ブックマーク切り替え
+            }}
             sx={{
               animation: isBookmarked ? `${popAnimation} 0.3s ease` : "none",
             }}
@@ -116,15 +126,16 @@ export function QuestionCard(props: QuestionCardProps) {
       </HStack>
 
       {/* カードクリックで詳細ページに遷移 */}
-      <Box
+      {/* <Box
         w="100%"
         h="100%"
         cursor="pointer"
         position="absolute"
         top={0}
         left={0}
-        onClick={onClick} // ここで状態更新と遷移を両方行う
-      />
+        onClick={onClick} // 詳細ページ遷移用
+      /> */}
     </Box>
   );
 }
+

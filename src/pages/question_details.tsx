@@ -1,4 +1,5 @@
-import { Box, Button, Text, VStack } from "@chakra-ui/react";
+import { BackButton } from "@/components/Buttons/BackButton";
+import { Box, Text, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -66,7 +67,7 @@ export default function QuestionDetails() {
           投稿日時: {question.created_ad}
         </Text>
         <Text>{question.content}</Text>
-        <Button colorScheme="teal" onClick={() => router.push("/")}>戻る</Button>
+        <BackButton/>
       </VStack>
     </Box>
   );

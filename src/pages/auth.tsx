@@ -30,7 +30,7 @@ export default function Home() {
       user_name: "Faker",
       title: "EXAMPLE",
       content:
-        "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。",
+        "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。まだ百字じゃないの？まだ？あいうえお",
       user_id: 1,
       is_anonymous: true,
       created_ad: "2024-12-11",
@@ -134,10 +134,17 @@ export default function Home() {
                         bookmarks={e.bookmarks}
                         isLiked={e.isLiked} // 状態を渡す
                         isBookmarked={e.isBookmarked} // 状態を渡す
-                        onToggleLike={() => toggleLike(e.id)} // イベントハンドラを渡す
-                        onToggleBookmark={() => toggleBookmark(e.id)} // イベントハンドラを渡す
+                        onToggleLike={(event) => {
+                          event.stopPropagation(); // イベントの伝播を停止
+                          toggleLike(e.id); // idを渡す
+                        }} // イベントハンドラを渡す
+                        onToggleBookmark={(event) => {
+                          event.stopPropagation(); // イベントの伝播を停止
+                          toggleBookmark(e.id); // idを渡す
+                        }} // イベントハンドラを渡す
                         onClick={() => viewDetails(e.id)} // 詳細ページ遷移のハンドラを渡す
                       />
+
                     </Box>
                   </WrapItem>
                 ))}
@@ -163,3 +170,4 @@ export default function Home() {
     </>
   );
 }
+
