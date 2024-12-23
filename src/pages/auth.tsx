@@ -13,7 +13,6 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -357,6 +356,52 @@ export default function Home() {
                   ))}
                 </Wrap>
               </Box>
+
+              {/* 質問投稿ボタン */}
+              <Button
+                // onClick={onPostOpen}
+                variant="solid"
+                aria-label="Post Question"
+                position="absolute"
+                top="80%"
+                colorScheme="teal" // ボタンのカラーを変更
+                size="lg" // ボタンサイズ
+                borderRadius="lg" // 角を丸くしておしゃれに
+                boxShadow="md" // シャドウ効果
+                _hover={{ bg: "teal.500", color: "white" }} // ホバー時に色が変わる
+                _active={{ bg: "teal.600" }} // クリック時に色が変わる
+                width="auto" // 幅を自動調整
+                padding="8px 16px" // ボタン内の余白を調整
+                fontSize="lg" // フォントサイズを調整
+                color="white" // テキストの色を白に
+              >
+                Post Question
+              </Button>
+
+              {/* 質問投稿ボタン
+              <IconButton
+                // onClick={onPostOpen}
+                variant="outline"
+                aria-label="Add Question"
+                icon={<AddIcon />}
+                position="absolute"
+                bottom="170px" // 下から170pxの位置に配置
+                right="85px" // 右から85pxの位置に配置
+                colorScheme="teal" // ボタンのカラーを変更
+                size="lg" // ボタンサイズ
+                borderRadius="md" // 角が丸い四角形にする
+                boxShadow="md" // シャドウ効果
+                _hover={{ bg: "teal.500", color: "white" }} // ホバー時に色が変わる
+                _active={{ bg: "teal.600" }} // クリック時に色が変わる
+                width="auto" // 幅を自動調整
+                padding="8px 16px" // ボタン内の余白を設定
+                fontSize="md" // フォントサイズ調整
+                color="teal.500" // アイコンとテキストの色
+              >
+                <Text fontSize="md" fontWeight="bold">
+                  Post Question
+                </Text>
+              </IconButton> */}
             </Box>
           </GridItem>
         </SimpleGrid>
