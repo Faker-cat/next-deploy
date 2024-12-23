@@ -25,10 +25,9 @@ type QuestionCardProps = {
   onClick: () => void; // 詳細ページに遷移するためのクリックハンドラ
 };
 
-
 function truncateContent(content: string): string {
-  const maxLength = 90; // 最大文字数
-  const visibleLength = 87; // 最初の表示文字数
+  const maxLength = 70; // 最大文字数
+  const visibleLength = 67; // 最初の表示文字数
   if (content.length > maxLength) {
     return content.slice(0, visibleLength) + "...";
   }
@@ -65,26 +64,26 @@ export function QuestionCard(props: QuestionCardProps) {
       <VStack align="start" spacing={2}>
         {/* タイトル */}
         <Box minW={"calc(100% - 110px)"} onClick={onClick}>
-        <Text fontSize="lg" fontWeight="bold" color="teal.600">
-          {title}
+          <Text fontSize="lg" fontWeight="bold" color="teal.600">
+            {title}
           </Text>
-          </Box>
+        </Box>
         <Box onClick={onClick}>
-        {/* ユーザー名 */}
-        <Text fontSize="sm" color="gray.500">
-          投稿者: {is_anonymous ? "匿名" : user_name}
-        </Text>
-
-        {/* 投稿時刻 */}
-        <Text fontSize="xs" color="gray.400">
-          投稿日時: {created_ad}
-        </Text>
-
-        {/* 本文 */}
-        <Box flex="1" width="100%" overflow="hidden" textOverflow="ellipsis">
-          <Text fontSize="md" color="gray.700">
-            {truncateContent(content)}
+          {/* ユーザー名 */}
+          <Text fontSize="sm" color="gray.500">
+            投稿者: {is_anonymous ? "匿名" : user_name}
           </Text>
+
+          {/* 投稿時刻 */}
+          <Text fontSize="xs" color="gray.400">
+            投稿日時: {created_ad}
+          </Text>
+
+          {/* 本文 */}
+          <Box flex="1" width="100%" overflow="hidden" textOverflow="ellipsis">
+            <Text fontSize="md" color="gray.700">
+              {truncateContent(content)}
+            </Text>
           </Box>
         </Box>
       </VStack>
@@ -110,7 +109,9 @@ export function QuestionCard(props: QuestionCardProps) {
         <HStack>
           <IconButton
             aria-label="bookmark"
-            icon={isBookmarked ? <FaBookmark color="orange" /> : <FaRegBookmark />}
+            icon={
+              isBookmarked ? <FaBookmark color="orange" /> : <FaRegBookmark />
+            }
             size="sm"
             variant="ghost"
             onClick={(e) => {
@@ -138,4 +139,3 @@ export function QuestionCard(props: QuestionCardProps) {
     </Box>
   );
 }
-

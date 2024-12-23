@@ -1,5 +1,5 @@
 import { QuestionCard } from "@/components/Card/QuestionCard";
-import { ContentsWithHedear } from "@/components/PageLayout/ContentsWithHedear";
+import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import { Box, GridItem, SimpleGrid, Wrap, WrapItem } from "@chakra-ui/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -43,7 +43,8 @@ export default function Home() {
       id: 2,
       user_name: "davis",
       title: "Another Question",
-      content: "Here's another example question with a moderate length content.",
+      content:
+        "Here's another example question with a moderate length content.",
       user_id: 2,
       is_anonymous: false,
       created_ad: "2024-12-10",
@@ -72,7 +73,11 @@ export default function Home() {
     setQuestions((prev) =>
       prev.map((q) =>
         q.id === id
-          ? { ...q, likes: q.isLiked ? q.likes - 1 : q.likes + 1, isLiked: !q.isLiked }
+          ? {
+              ...q,
+              likes: q.isLiked ? q.likes - 1 : q.likes + 1,
+              isLiked: !q.isLiked,
+            }
           : q
       )
     );
@@ -104,7 +109,7 @@ export default function Home() {
         <title>Query</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ContentsWithHedear>
+      <ContentsWithHeader>
         <SimpleGrid columns={10} gap={4} height="100vh" width="100%" px={4}>
           <GridItem colSpan={8}>
             <Box height="100%" bg="#C3DBE8" p={4}>
@@ -144,7 +149,6 @@ export default function Home() {
                         }} // イベントハンドラを渡す
                         onClick={() => viewDetails(e.id)} // 詳細ページ遷移のハンドラを渡す
                       />
-
                     </Box>
                   </WrapItem>
                 ))}
@@ -166,8 +170,7 @@ export default function Home() {
             </Box>
           </GridItem>
         </SimpleGrid>
-      </ContentsWithHedear>
+      </ContentsWithHeader>
     </>
   );
 }
-
