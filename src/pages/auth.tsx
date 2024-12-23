@@ -99,20 +99,25 @@ export default function Home() {
     "勉強",
   ];
 
-  // 検索処理
+  // 検索処理の更新
   useEffect(() => {
-    if (searchKeyword === "") {
+    const keywords = searchKeyword
+      .toLowerCase()
+      .split(" ") // 空白で分割してキーワード配列を作成
+      .filter((k) => k.trim() !== ""); // 空の文字列を除外
+
+    if (keywords.length === 0) {
       setFilteredQuestions(questions); // 検索ワードが空なら全て表示
     } else {
       setFilteredQuestions(
-        questions.filter(
-          (q) =>
-            q.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-            q.user_name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-            q.content.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-            q.tags.some((tag) =>
-              tag.toLowerCase().includes(searchKeyword.toLowerCase())
-            )
+        questions.filter((q) =>
+          keywords.every(
+            (keyword) =>
+              q.title.toLowerCase().includes(keyword) ||
+              q.user_name.toLowerCase().includes(keyword) ||
+              q.content.toLowerCase().includes(keyword) ||
+              q.tags.some((tag) => tag.toLowerCase().includes(keyword))
+          )
         )
       );
     }

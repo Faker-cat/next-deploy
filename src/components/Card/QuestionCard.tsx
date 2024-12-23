@@ -183,17 +183,6 @@ export function QuestionCard(props: QuestionCardProps) {
           <Text fontSize="sm">{bookmarks}</Text>
         </HStack>
       </HStack>
-
-      {/* カードクリックで詳細ページに遷移 */}
-      {/* <Box
-        w="100%"
-        h="100%"
-        cursor="pointer"
-        position="absolute"
-        top={0}
-        left={0}
-        onClick={onClick} // 詳細ページ遷移用
-      /> */}
     </Box>
   );
 }
