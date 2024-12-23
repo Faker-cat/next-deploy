@@ -170,10 +170,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ContentsWithHeader>
-        <SimpleGrid columns={10} gap={4} height="100vh" width="100%" px={4}>
+        <SimpleGrid
+          columns={10}
+          gap={4}
+          height="100vh"
+          width="100%"
+          px={4}
+          bg="white"
+        >
           {/* 左側 */}
           <GridItem colSpan={{ base: 10, md: 8 }}>
-            <Box height="100%" bg="#C3DBE8" p={4}>
+            <Box
+              height="100%"
+              bg="#253045"
+              p={4}
+              boxShadow="md"
+              borderRadius="md"
+            >
               {filteredQuestions.length > 0 ? (
                 <Wrap spacing="16px" justify="flex-start">
                   {filteredQuestions.map((e) => (
@@ -229,7 +242,7 @@ export default function Home() {
           <GridItem colSpan={{ base: 10, md: 2 }}>
             <Box
               height="100%"
-              bg="white"
+              bg="#191e2b"
               p={4}
               boxShadow="md"
               borderRadius="md"
@@ -240,6 +253,8 @@ export default function Home() {
                   placeholder="検索キーワードを入力..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
+                  color="white"
+                  _placeholder={{ color: "gray.400" }}
                 />
                 <InputRightElement>
                   <Button

@@ -27,7 +27,7 @@ export default function QuestionDetails() {
       // クエリパラメータからIDを取得
       const questionId = parseInt(query.id as string, 10);
 
-      // サンプルデータ（ここではデータをハードコーディング）
+      // サンプルデータ
       const sampleQuestions: Question[] = [
         {
           id: 1,
@@ -59,7 +59,9 @@ export default function QuestionDetails() {
   return (
     <Box p={4}>
       <VStack spacing={4} align="start">
-        <Text fontSize="2xl" fontWeight="bold">{question.title}</Text>
+        <Text fontSize="2xl" fontWeight="bold">
+          {question.title}
+        </Text>
         <Text fontSize="sm" color="gray.500">
           投稿者: {question.is_anonymous ? "匿名" : question.user_name}
         </Text>
@@ -67,7 +69,7 @@ export default function QuestionDetails() {
           投稿日時: {question.created_ad}
         </Text>
         <Text>{question.content}</Text>
-        <BackButton/>
+        <BackButton />
       </VStack>
     </Box>
   );
