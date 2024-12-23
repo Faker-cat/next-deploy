@@ -1,4 +1,13 @@
-import { Box, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  IconButton,
+  Tag,
+  TagLabel,
+  Text,
+  VStack,
+  Wrap,
+} from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import { FaBookmark, FaHeart, FaRegBookmark, FaRegHeart } from "react-icons/fa";
 
@@ -8,6 +17,39 @@ const popAnimation = keyframes`
   50% { transform: scale(1.4); }
   100% { transform: scale(1); }
 `;
+
+// Chakra UIのカラーパレットを使用
+const colorPalette = [
+  "red",
+  "orange",
+  "yellow",
+  "green",
+  "teal",
+  "blue",
+  "cyan",
+  "purple",
+  "pink",
+];
+
+// タグカラーをキャッシュするマップ
+const tagColorCache: Record<string, string> = {};
+
+// ランダムな色を生成する関数
+function getRandomColor(tag: string): string {
+  // 既に色が割り当てられている場合はキャッシュを使用
+  if (tagColorCache[tag]) {
+    return tagColorCache[tag];
+  }
+
+  // ランダムに色を選択
+  const randomColor =
+    colorPalette[Math.floor(Math.random() * colorPalette.length)];
+
+  // キャッシュに保存
+  tagColorCache[tag] = randomColor;
+
+  return randomColor;
+}
 
 type QuestionCardProps = {
   id: number;
@@ -20,6 +62,7 @@ type QuestionCardProps = {
   bookmarks: number;
   isLiked: boolean; // いいね状態
   isBookmarked: boolean; // ブックマーク状態
+  tags: string[]; // タグ情報を追加
   onToggleLike: (e: React.MouseEvent) => void; // いいね切り替え関数（イベントを受け取る）
   onToggleBookmark: (e: React.MouseEvent) => void; // ブックマーク切り替え関数（イベントを受け取る）
   onClick: () => void; // 詳細ページに遷移するためのクリックハンドラ
@@ -45,6 +88,7 @@ export function QuestionCard(props: QuestionCardProps) {
     bookmarks,
     isLiked,
     isBookmarked,
+    tags,
     onToggleLike,
     onToggleBookmark,
     onClick, // 詳細ページ遷移用
@@ -86,6 +130,20 @@ export function QuestionCard(props: QuestionCardProps) {
             </Text>
           </Box>
         </Box>
+
+        {/* タグ表示 */}
+        <Wrap spacing={2} mt={2}>
+          {tags.map((tag) => (
+            <Tag
+              key={tag}
+              bg={`${getRandomColor(tag)}.200`} // タグの色を取得
+              color={`${getRandomColor(tag)}.700`}
+              size="sm"
+            >
+              <TagLabel>{tag}</TagLabel>
+            </Tag>
+          ))}
+        </Wrap>
       </VStack>
 
       {/* いいね & ブックマーク */}
