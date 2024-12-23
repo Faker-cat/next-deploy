@@ -326,11 +326,13 @@ export default function Home() {
                   >
                     {tag}
                     <Button
-                      size="xs"
+                      size="xm"
                       ml={2}
                       onClick={() => removeActiveTag(tag)}
                       variant="ghost"
-                      colorScheme="red"
+                      colorScheme="gray"
+                      fontSize="1.2rem" // 文字サイズを調整
+                      _hover={{ bg: "transparent", color: "gray.300" }} // ホバー時の色
                     >
                       ×
                     </Button>
