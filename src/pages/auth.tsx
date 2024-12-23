@@ -281,7 +281,7 @@ export default function Home() {
                       key={tag}
                       size="md"
                       variant="solid"
-                      colorScheme="blue"
+                      colorScheme="gray"
                       cursor="pointer"
                       onClick={() => handleTagClick(tag)}
                     >

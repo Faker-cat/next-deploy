@@ -37,21 +37,6 @@ export function Header() {
         </Text>
 
         {/* ハンバーガーメニュー */}
-        {/* <Menu isOpen={isOpen}>
-          <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            icon={<HamburgerIcon />}
-            variant="outline"
-            onClick={isOpen ? onClose : onOpen}
-          />
-          <MenuList color="black">
-            <MenuItem onClick={() => router.push("/auth")}>Query</MenuItem>
-            <MenuItem onClick={() => router.push("/user")}>user page</MenuItem>
-          </MenuList>
-        </Menu> */}
-
-        {/* ハンバーガーメニュー */}
         <Box position="relative">
           <IconButton
             aria-label="Options"
@@ -88,7 +73,7 @@ export function Header() {
               >
                 <Box
                   px={8}
-                  py={1}
+                  py={2}
                   cursor="pointer"
                   borderRadius="md"
                   _hover={{ bg: "gray.100" }} // ホバー時の背景色を薄い灰色に
