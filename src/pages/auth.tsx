@@ -59,7 +59,7 @@ export default function Home() {
       user_name: "davis",
       title: "Another Question",
       content:
-        "Here's another example question with a moderate length content.",
+        "Here's another example question with a moderate このlength content.",
       user_id: 2,
       is_anonymous: false,
       created_ad: "2024-12-10",
@@ -90,24 +90,47 @@ export default function Home() {
   const [filteredQuestions, setFilteredQuestions] =
     useState<Question[]>(questions);
 
+  const [activeTags, setActiveTags] = useState<string[]>([]); // 現在選択されたタグ
+
   const recommendedTags = [
     "JavaScript",
-    "趣味",
+    "Backend",
     "健康",
     "習慣",
     "研究",
     "勉強",
   ];
 
-  // 検索処理の更新
+  // タグクリックで検索
+  const handleTagClick = (tag: string) => {
+    // タグがまだ選択されていない場合はactiveTagsに追加
+    setActiveTags((prevTags) => {
+      if (!prevTags.includes(tag)) {
+        return [...prevTags, tag]; // タグを追加
+      }
+      return prevTags; // 既に追加されていれば何もしない
+    });
+
+    // 検索キーワードにタグを追加して検索
+    setSearchKeyword((prevKeyword) => {
+      const newKeyword = prevKeyword.trim();
+      if (!newKeyword.includes(tag)) {
+        return newKeyword + " " + tag;
+      }
+      return prevKeyword; // すでにタグが含まれていればそのまま
+    });
+  };
+
+  // 検索処理のuseEffect
   useEffect(() => {
+    // 検索キーワードを半角・全角空白で分割
     const keywords = searchKeyword
       .toLowerCase()
-      .split(" ") // 空白で分割してキーワード配列を作成
+      .split(/\s+/) // 正規表現で空白（半角・全角）を区切り文字として扱う
       .filter((k) => k.trim() !== ""); // 空の文字列を除外
 
-    if (keywords.length === 0) {
-      setFilteredQuestions(questions); // 検索ワードが空なら全て表示
+    if (keywords.length === 0 && activeTags.length === 0) {
+      setFilteredQuestions(questions); // 検索ワードとタグが空なら全て表示
     } else {
       setFilteredQuestions(
         questions.filter((q) =>
@@ -121,16 +144,28 @@ export default function Home() {
         )
       );
     }
-  }, [searchKeyword, questions]);
+  }, [searchKeyword, activeTags, questions]); // activeTagsを依存配列に追加
 
   // 検索キーワードのリセット
   const resetSearch = () => {
     setSearchKeyword("");
+    setActiveTags([]); // タグをリセット
   };
 
-  // タグクリックで検索
-  const handleTagClick = (tag: string) => {
-    setSearchKeyword(tag);
+  // アクティブタグの削除
+  const removeActiveTag = (tag: string) => {
+    // タグを削除し、検索バーからそのタグも削除
+    setActiveTags((prevTags) => {
+      const newTags = prevTags.filter((t) => t !== tag);
+      setSearchKeyword((prevKeyword) => {
+        const updatedKeyword = prevKeyword
+          .split(" ")
+          .filter((keyword) => keyword !== tag) // タグを検索キーワードから削除
+          .join(" ");
+        return updatedKeyword;
+      });
+      return newTags;
+    });
   };
 
   // いいねの切り替え処理
@@ -277,6 +312,31 @@ export default function Home() {
                   </Button>
                 </InputRightElement>
               </InputGroup>
+
+              {/* 現在選択されているタグ */}
+              <Wrap spacing="8px" mb={4}>
+                {activeTags.map((tag) => (
+                  <Tag
+                    key={tag}
+                    size="md"
+                    variant="solid"
+                    colorScheme="blue"
+                    cursor="pointer"
+                    onClick={() => removeActiveTag(tag)}
+                  >
+                    {tag}
+                    <Button
+                      size="xs"
+                      ml={2}
+                      onClick={() => removeActiveTag(tag)}
+                      variant="ghost"
+                      colorScheme="red"
+                    >
+                      ×
+                    </Button>
+                  </Tag>
+                ))}
+              </Wrap>
 
               {/* おすすめタグ */}
               <Box>
