@@ -1,4 +1,3 @@
-import { BackButton } from "@/components/Buttons/BackButton";
 import { LogoutButton } from "@/components/Buttons/LogoutButton";
 import { QuestionCard } from "@/components/Card/QuestionCard";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
@@ -84,7 +83,7 @@ export default function UserPage() {
     {
       id: 3,
       user_name: "davis",
-      title: "Another Question",
+      title: "質問例！",
       content: "この質問をブックマークした質問に表示したい",
       user_id: 3,
       is_anonymous: false,
@@ -109,30 +108,6 @@ export default function UserPage() {
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [filteredQuestions, setFilteredQuestions] =
     useState<Question[]>(questions);
-
-  // 検索処理のuseEffect
-  useEffect(() => {
-    const keywords = searchKeyword
-      .toLowerCase()
-      .split(/\s+/)
-      .filter((k) => k.trim() !== "");
-
-    if (keywords.length === 0) {
-      setFilteredQuestions(questions);
-    } else {
-      setFilteredQuestions(
-        questions.filter((q) =>
-          keywords.every(
-            (keyword) =>
-              q.title.toLowerCase().includes(keyword) ||
-              q.user_name.toLowerCase().includes(keyword) ||
-              q.content.toLowerCase().includes(keyword) ||
-              q.tags.some((tag) => tag.toLowerCase().includes(keyword))
-          )
-        )
-      );
-    }
-  }, [searchKeyword, questions]);
 
   // いいねの切り替え処理
   const toggleLike = (id: number) => {
@@ -208,20 +183,48 @@ export default function UserPage() {
 
   // 質問のフィルタリング（タブ選択による）
   const getFilteredQuestions = (tabIndex: number) => {
+    let filtered = questions;
+
     switch (tabIndex) {
       case 0:
         // 自分の質問
-        return questions.filter((q) => q.user_id === user.id);
+        filtered = questions.filter((q) => q.user_id === user.id);
+        break;
       case 1:
         // いいねした質問
-        return questions.filter((q) => q.isLiked);
+        filtered = questions.filter((q) => q.isLiked);
+        break;
       case 2:
         // ブックマークした質問
-        return questions.filter((q) => q.isBookmarked);
-      default:
-        return questions;
+        filtered = questions.filter((q) => q.isBookmarked);
+        break;
     }
+
+    // 検索キーワードによるフィルタリング
+    if (searchKeyword) {
+      const keywords = searchKeyword
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((k) => k.trim() !== "");
+
+      filtered = filtered.filter((q) =>
+        keywords.every(
+          (keyword) =>
+            q.title.toLowerCase().includes(keyword) ||
+            q.user_name.toLowerCase().includes(keyword) ||
+            q.content.toLowerCase().includes(keyword) ||
+            q.tags.some((tag) => tag.toLowerCase().includes(keyword))
+        )
+      );
+    }
+
+    return filtered;
   };
+
+  // 検索処理のuseEffect
+  useEffect(() => {
+    setFilteredQuestions(getFilteredQuestions(selectedTab));
+  }, [searchKeyword, selectedTab, questions]);
 
   return (
     <>
@@ -383,7 +386,6 @@ export default function UserPage() {
               <Button w="100%" colorScheme="teal" mb={4}>
                 プロフィール編集
               </Button>
-              <BackButton />
               <LogoutButton />
             </Box>
           </GridItem>
