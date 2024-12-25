@@ -48,7 +48,8 @@ export default function Home() {
     {
       id: 1,
       user_name: "Faker",
-      title: "EXAMPLE",
+      title:
+        "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもあいうえおあいうえ",
       content:
         "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。まだ百字じゃないの？まだ？あいうえお",
       user_id: 1,
@@ -242,13 +243,10 @@ export default function Home() {
               {filteredQuestions.length > 0 ? (
                 <Wrap spacing="16px" justify="flex-start">
                   {filteredQuestions.map((e) => (
-                    <WrapItem
-                      key={e.id}
-                      flexBasis={{ base: "100%", md: "calc(50% - 16px)" }}
-                    >
+                    <WrapItem key={e.id} flexBasis="100%">
                       <Box
                         w="100%"
-                        h="200px"
+                        h="210px"
                         cursor="pointer"
                         borderRadius="md"
                         boxShadow="md"
