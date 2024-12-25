@@ -147,7 +147,7 @@ export function QuestionCard(props: QuestionCardProps) {
       </VStack>
 
       {/* いいね & ブックマーク */}
-      <HStack position="absolute" top={3.5} right={2} spacing={4}>
+      <HStack position="absolute" top={3.5} right={2} spacing={2}>
         <HStack>
           <IconButton
             aria-label="like"
@@ -164,7 +164,7 @@ export function QuestionCard(props: QuestionCardProps) {
           />
           <Text fontSize="sm">{likes}</Text>
         </HStack>
-        <HStack>
+        <HStack spacing={0.1}>
           <IconButton
             aria-label="bookmark"
             icon={
