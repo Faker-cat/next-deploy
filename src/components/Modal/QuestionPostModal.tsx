@@ -21,7 +21,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
   isOpen: boolean;
@@ -91,7 +91,7 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
         duration: 2000,
         isClosable: true,
       });
-      onClose();
+      onClose(); // モーダル閉じる
     }, 1000);
   };
 
@@ -99,6 +99,19 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
     setIsAnonymous(!isAnonymous);
     setAuthor(isAnonymous ? "" : "匿名");
   };
+
+  // モーダルが閉じられる際に状態をリセットする
+  useEffect(() => {
+    if (!isOpen) {
+      // モーダルが閉じられた時に状態をリセット
+      setTitle("");
+      setIsAnonymous(true);
+      setAuthor("匿名");
+      setBody("");
+      setTags([]);
+      setNewTag("");
+    }
+  }, [isOpen]);
 
   // タイトルのリセット
   const resetTitle = () => {
