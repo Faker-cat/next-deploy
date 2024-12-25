@@ -132,7 +132,7 @@ export function QuestionCard(props: QuestionCardProps) {
         </Box>
 
         {/* タグ表示 */}
-        <Wrap spacing={2} mt={2}>
+        <Wrap spacing={2} mt={1}>
           {tags.map((tag) => (
             <Tag
               key={tag}

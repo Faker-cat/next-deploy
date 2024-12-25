@@ -1,4 +1,5 @@
 import { QuestionCard } from "@/components/Card/QuestionCard";
+import { QuestionPostModal } from "@/components/Modal/QuestionPostModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import {
   Box,
@@ -12,6 +13,7 @@ import {
   Text,
   Wrap,
   WrapItem,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -35,6 +37,11 @@ type Question = {
 
 export default function Home() {
   const router = useRouter();
+  const {
+    isOpen: isPostOpen,
+    onOpen: onPostOpen,
+    onClose: onPostClose,
+  } = useDisclosure();
 
   // サンプルデータ
   const [questions, setQuestions] = useState<Question[]>([
@@ -51,7 +58,7 @@ export default function Home() {
       bookmarks: 5,
       isLiked: false,
       isBookmarked: false,
-      tags: ["JavaScript", "React", "Frontend"], // タグを追加
+      tags: ["JavaScript", "React", "Backend"], // タグを追加
     },
     {
       id: 2,
@@ -80,7 +87,13 @@ export default function Home() {
       bookmarks: 1,
       isLiked: false,
       isBookmarked: false,
-      tags: ["Backend", "UI/UX"], // タグを追加
+      tags: [
+        "あいうえおかきく",
+        "あいうえおかきく",
+        "あいうえおかきく",
+        "あいうえおかきく",
+        "あいうえおかきく",
+      ], // タグを追加
     },
   ]);
 
@@ -221,7 +234,7 @@ export default function Home() {
           <GridItem colSpan={{ base: 10, md: 8 }}>
             <Box
               height="100%"
-              bg="#253045"
+              bg="#f5f5f5"
               p={4}
               boxShadow="md"
               borderRadius="md"
@@ -281,7 +294,7 @@ export default function Home() {
           <GridItem colSpan={{ base: 10, md: 2 }}>
             <Box
               height="100%"
-              bg="#191e2b"
+              bg="#253045"
               p={4}
               boxShadow="md"
               borderRadius="md"
@@ -359,14 +372,14 @@ export default function Home() {
 
               {/* 質問投稿ボタン */}
               <Button
-                // onClick={onPostOpen}
+                onClick={onPostOpen}
                 variant="solid"
                 aria-label="Post Question"
                 position="absolute"
                 top="80%"
                 colorScheme="teal" // ボタンのカラーを変更
                 size="lg" // ボタンサイズ
-                borderRadius="lg" // 角を丸くしておしゃれに
+                borderRadius="lg" // 角を丸く
                 boxShadow="md" // シャドウ効果
                 _hover={{ bg: "teal.500", color: "white" }} // ホバー時に色が変わる
                 _active={{ bg: "teal.600" }} // クリック時に色が変わる
@@ -406,6 +419,9 @@ export default function Home() {
           </GridItem>
         </SimpleGrid>
       </ContentsWithHeader>
+
+      {/* モーダルの定義 */}
+      <QuestionPostModal isOpen={isPostOpen} onClose={onPostClose} />
     </>
   );
 }
