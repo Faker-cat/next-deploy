@@ -107,7 +107,7 @@ export function QuestionCard(props: QuestionCardProps) {
     >
       <VStack align="start" spacing={2}>
         {/* タイトル */}
-        <Box minW={"calc(100% - 110px)"} onClick={onClick}>
+        <Box maxW={"calc(100% - 110px)"} onClick={onClick}>
           <Text fontSize="lg" fontWeight="bold" color="teal.600">
             {title}
           </Text>
@@ -147,7 +147,7 @@ export function QuestionCard(props: QuestionCardProps) {
       </VStack>
 
       {/* いいね & ブックマーク */}
-      <HStack position="absolute" top={2} right={2} spacing={4}>
+      <HStack position="absolute" top={3.5} right={2} spacing={4}>
         <HStack>
           <IconButton
             aria-label="like"
