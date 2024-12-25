@@ -38,7 +38,7 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
-  const maxTitleLength = 44;
+  const maxTitleLength = 50;
   const maxBodyLength = 500;
   const maxTagLength = 8;
   const maxTags = 5;
