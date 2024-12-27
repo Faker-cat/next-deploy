@@ -1,5 +1,6 @@
 import { LogoutButton } from "@/components/Buttons/LogoutButton";
 import { QuestionCard } from "@/components/Card/QuestionCard";
+import ProfileModal from "@/components/Modal/ProfileModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import {
   Box,
@@ -43,9 +44,9 @@ type Question = {
 export default function UserPage() {
   const router = useRouter();
   const {
-    isOpen: isPostOpen,
-    onOpen: onPostOpen,
-    onClose: onPostClose,
+    isOpen: isProfileOpen,
+    onOpen: onProfileOpen,
+    onClose: onProfileClose,
   } = useDisclosure();
 
   // サンプルデータ（現在のユーザーの質問のみ）
@@ -147,10 +148,10 @@ export default function UserPage() {
   // 質問カードのサンプル
   const renderQuestionCards = (questions: Question[]) => {
     return questions.map((e) => (
-      <WrapItem key={e.id} flexBasis={{ base: "100%", md: "calc(50% - 16px)" }}>
+      <WrapItem key={e.id}>
         <Box
           w="100%"
-          h="200px"
+          h="210px"
           cursor="pointer"
           borderRadius="md"
           boxShadow="md"
@@ -259,11 +260,34 @@ export default function UserPage() {
                 onChange={(index) => setSelectedTab(index)}
               >
                 <TabList>
-                  <Tab>自分の質問</Tab>
-                  <Tab>いいねした質問</Tab>
-                  <Tab>ブックマークした質問</Tab>
+                  <Tab
+                    _selected={{
+                      bg: "teal.500",
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    自分の質問
+                  </Tab>
+                  <Tab
+                    _selected={{
+                      bg: "teal.500",
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    いいねした質問
+                  </Tab>
+                  <Tab
+                    _selected={{
+                      bg: "teal.500",
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ブックマークした質問
+                  </Tab>
                 </TabList>
-
                 <TabPanels>
                   {/* 自分の質問 */}
                   <TabPanel>
@@ -383,7 +407,12 @@ export default function UserPage() {
               </InputGroup>
 
               {/* アクションボタン */}
-              <Button w="100%" colorScheme="teal" mb={4}>
+              <Button
+                w="100%"
+                colorScheme="teal"
+                mb={4}
+                onClick={onProfileOpen}
+              >
                 プロフィール編集
               </Button>
               <LogoutButton />
@@ -391,6 +420,9 @@ export default function UserPage() {
           </GridItem>
         </SimpleGrid>
       </ContentsWithHeader>
+
+      {/* モーダルの定義 */}
+      <ProfileModal isOpen={isProfileOpen} onClose={onProfileClose} />
     </>
   );
 }
