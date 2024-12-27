@@ -1,6 +1,7 @@
 import { LogoutButton } from "@/components/Buttons/LogoutButton";
 import { QuestionCard } from "@/components/Card/QuestionCard";
 import ProfileModal from "@/components/Modal/ProfileModal";
+import QuestionDeleteModal from "@/components/Modal/QuestionDeleteModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import {
   Box,
@@ -110,73 +111,99 @@ export default function UserPage() {
   const [filteredQuestions, setFilteredQuestions] =
     useState<Question[]>(questions);
 
-  // いいねの切り替え処理
-  const toggleLike = (id: number) => {
-    setQuestions((prev) =>
-      prev.map((q) =>
-        q.id === id
-          ? {
-              ...q,
-              likes: q.isLiked ? q.likes - 1 : q.likes + 1,
-              isLiked: !q.isLiked,
-            }
-          : q
-      )
-    );
+  // 削除対象の質問 ID を管理するステートを追加
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+
+  // モーダルの開閉状態管理
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
+  } = useDisclosure();
+
+  // モーダルの「削除」ボタンが押されたときの処理
+  const confirmDelete = () => {
+    if (deleteTargetId !== null) {
+      setQuestions((prev) => prev.filter((q) => q.id !== deleteTargetId));
+      setDeleteTargetId(null); // ターゲットをリセット
+    }
+    onDeleteModalClose();
   };
 
-  // ブックマークの切り替え処理
-  const toggleBookmark = (id: number) => {
-    setQuestions((prev) =>
-      prev.map((q) =>
-        q.id === id
-          ? {
-              ...q,
-              bookmarks: q.isBookmarked ? q.bookmarks - 1 : q.bookmarks + 1,
-              isBookmarked: !q.isBookmarked,
-            }
-          : q
-      )
-    );
-  };
-
-  // 質問の詳細ページへ遷移する関数
-  const viewDetails = (id: number) => {
-    router.push(`/question_details?id=${id}`);
-  };
-
-  // 質問カードのサンプル
   const renderQuestionCards = (questions: Question[]) => {
     return questions.map((e) => (
-      <WrapItem key={e.id}>
+      <WrapItem key={e.id} w="100%">
         <Box
           w="100%"
-          h="210px"
+          h="auto"
           cursor="pointer"
           borderRadius="md"
-          boxShadow="md"
           _hover={{ boxShadow: "lg", transform: "scale(1.05)" }}
           transition="0.2s ease"
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          p={4}
         >
-          <QuestionCard
-            id={e.id}
-            user_name={e.user_name}
-            title={e.title}
-            content={e.content}
-            is_anonymous={e.is_anonymous}
-            created_ad={e.created_ad}
-            likes={e.likes}
-            bookmarks={e.bookmarks}
-            isLiked={e.isLiked}
-            isBookmarked={e.isBookmarked}
-            tags={e.tags}
-            onToggleLike={() => toggleLike(e.id)}
-            onToggleBookmark={() => toggleBookmark(e.id)}
-            onClick={() => router.push(`/question_details?id=${e.id}`)}
-          />
+          {/* 質問カード部分 */}
+          <Box flex="1">
+            <QuestionCard
+              id={e.id}
+              user_name={e.user_name}
+              title={e.title}
+              content={e.content}
+              is_anonymous={e.is_anonymous}
+              created_ad={e.created_ad}
+              likes={e.likes}
+              bookmarks={e.bookmarks}
+              isLiked={e.isLiked}
+              isBookmarked={e.isBookmarked}
+              tags={e.tags}
+              onToggleLike={() => toggleLike(e.id)}
+              onToggleBookmark={() => toggleBookmark(e.id)}
+              onClick={() => router.push(`/question_details?id=${e.id}`)}
+            />
+          </Box>
+
+          {/* ボタン部分 (自分の質問のみ表示) */}
+          {e.user_id === user.id && (
+            <Box display="flex" gap="8px" ml={4}>
+              <Button
+                size="sm"
+                colorScheme="teal"
+                variant="outline"
+                onClick={() => handleEditQuestion(e.id)}
+              >
+                Edit
+              </Button>
+              <Button
+                size="sm"
+                colorScheme="red"
+                variant="outline"
+                onClick={() => {
+                  setDeleteTargetId(e.id); // 削除対象を設定
+                  onDeleteModalOpen(); // モーダルを開く
+                }}
+              >
+                Delete
+              </Button>
+            </Box>
+          )}
         </Box>
       </WrapItem>
     ));
+  };
+
+  const handleEditQuestion = (id: number) => {
+    // 編集処理（例: モーダルを表示）
+    alert(`Editing question ID: ${id}`);
+  };
+
+  const handleDeleteQuestion = (id: number) => {
+    // 削除処理
+    if (confirm("Are you sure you want to delete this question?")) {
+      setQuestions((prev) => prev.filter((q) => q.id !== id));
+    }
   };
 
   // タブで選択された質問の管理
@@ -226,6 +253,41 @@ export default function UserPage() {
   useEffect(() => {
     setFilteredQuestions(getFilteredQuestions(selectedTab));
   }, [searchKeyword, selectedTab, questions]);
+
+  // いいねの切り替え処理
+  const toggleLike = (id: number) => {
+    setQuestions((prev) =>
+      prev.map((q) =>
+        q.id === id
+          ? {
+              ...q,
+              likes: q.isLiked ? q.likes - 1 : q.likes + 1,
+              isLiked: !q.isLiked,
+            }
+          : q
+      )
+    );
+  };
+
+  // ブックマークの切り替え処理
+  const toggleBookmark = (id: number) => {
+    setQuestions((prev) =>
+      prev.map((q) =>
+        q.id === id
+          ? {
+              ...q,
+              bookmarks: q.isBookmarked ? q.bookmarks - 1 : q.bookmarks + 1,
+              isBookmarked: !q.isBookmarked,
+            }
+          : q
+      )
+    );
+  };
+
+  // 質問の詳細ページへ遷移する関数
+  const viewDetails = (id: number) => {
+    router.push(`/question_details?id=${id}`);
+  };
 
   return (
     <>
@@ -301,6 +363,7 @@ export default function UserPage() {
                         alignItems="center"
                         justifyContent="center"
                         height="100%"
+                        w="100%"
                       >
                         <Text color="gray.500" textAlign="center" fontSize="lg">
                           質問が見つかりません。
@@ -423,6 +486,15 @@ export default function UserPage() {
 
       {/* モーダルの定義 */}
       <ProfileModal isOpen={isProfileOpen} onClose={onProfileClose} />
+      {/* 削除確認モーダル */}
+      <QuestionDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setDeleteTargetId(null); // ターゲットをリセット
+          onDeleteModalClose();
+        }}
+        onConfirm={confirmDelete}
+      />
     </>
   );
 }
