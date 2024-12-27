@@ -35,15 +35,18 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        mx="auto" // 左右中央揃え
+        mt="auto" // 上下中央揃え
+        my="auto" // 上下方向の余白を自動調整
+      >
         <ModalHeader>Edit Profile</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4} align="stretch">
             {/* プロフィール画像 */}
-            <FormControl>
-              <FormLabel>プロフィール画像</FormLabel>
-              <Avatar size="xl" src={avatar} mb={4} />
+            <FormControl textAlign="center">
+              <Avatar size="xl" src={avatar} mb={4} mx="auto" />
               <Input
                 type="text"
                 placeholder="画像URLを入力"
