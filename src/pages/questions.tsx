@@ -15,6 +15,7 @@ import {
   WrapItem,
   useDisclosure,
 } from "@chakra-ui/react";
+import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -44,59 +45,27 @@ export default function Home() {
   } = useDisclosure();
 
   // サンプルデータ
-  const [questions, setQuestions] = useState<Question[]>([
-    {
-      id: 1,
-      user_name: "Faker",
-      title:
-        "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもあいうえおあいうえ",
-      content:
-        "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。まだ百字じゃないの？まだ？あいうえお",
-      user_id: 1,
-      is_anonymous: true,
-      created_ad: "2024-12-11",
-      likes: 10,
-      bookmarks: 5,
-      isLiked: false,
-      isBookmarked: false,
-      tags: ["JavaScript", "React", "Backend"], // タグを追加
-    },
-    {
-      id: 2,
-      user_name: "davis",
-      title: "Another Question",
-      content:
-        "Here's another example question with a moderate このlength content.",
-      user_id: 2,
-      is_anonymous: false,
-      created_ad: "2024-12-10",
-      likes: 3,
-      bookmarks: 2,
-      isLiked: false,
-      isBookmarked: false,
-      tags: ["Backend", "Node.js"], // タグを追加
-    },
-    {
-      id: 3,
-      user_name: "eto",
-      title: "Yet Another Question",
-      content: "Short content.",
-      user_id: 3,
-      is_anonymous: false,
-      created_ad: "2024-12-09",
-      likes: 0,
-      bookmarks: 1,
-      isLiked: false,
-      isBookmarked: false,
-      tags: [
-        "あいうえおかきく",
-        "あいうえおかきく",
-        "あいうえおかきく",
-        "あいうえおかきく",
-        "あいうえおかきく",
-      ], // タグを追加
-    },
-  ]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+
+  async function handleGet() {
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + "/questions";
+      const res = await axios.get(url);
+      if (res.status !== 200) {
+        throw new Error("Failed to fetch questions");
+      }
+      setQuestions(res.data as Question[]);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    const init = async () => {
+      await handleGet();
+    };
+    init();
+  }, []);
 
   // 検索状態管理
   const [searchKeyword, setSearchKeyword] = useState<string>("");

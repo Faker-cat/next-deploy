@@ -30,8 +30,8 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
       //setSession(session);
       if (session) {
         if (pathname === "/") {
-          router.replace("/auth");
-          return ;
+          router.replace("/questions");
+          return;
         }
         setIsReady(true);
         return;
