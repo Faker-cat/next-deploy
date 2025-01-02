@@ -2,6 +2,7 @@ import {
   Button,
   FormControl,
   FormLabel,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
@@ -26,6 +27,8 @@ import { useEffect, useState } from "react";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  // userDisplayName: string | null; // 表示名があるかどうかを判定するためのprops
+  userDisplayName?: string; // userDisplayNameをPropsに追加
 }
 
 export function QuestionPostModal({ isOpen, onClose }: Props) {
@@ -43,6 +46,20 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
   const maxTagLength = 8;
   const maxTags = 5;
   const maxAuthorLength = 30; // 投稿者名の文字数制限
+
+  // 仮の表示名を設定
+  const userDisplayName = "Faker";
+
+  // 投稿者名を設定する処理
+  useEffect(() => {
+    if (userDisplayName) {
+      setAuthor(userDisplayName);
+      setIsAnonymous(false); // 表示名があれば匿名ではない
+    } else {
+      setAuthor("匿名");
+      setIsAnonymous(true); // 表示名がない場合は匿名
+    }
+  }, [userDisplayName]);
 
   const handleAddTag = () => {
     if (tags.length >= maxTags) {
@@ -93,11 +110,6 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
       });
       onClose(); // モーダル閉じる
     }, 1000);
-  };
-
-  const toggleAnonymous = () => {
-    setIsAnonymous(!isAnonymous);
-    setAuthor(isAnonymous ? "" : "匿名");
   };
 
   // モーダルが閉じられる際に状態をリセットする
@@ -166,26 +178,47 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
                 {title.length}/{maxTitleLength}
               </Text>
             </FormControl>
+
             <FormControl>
               <FormLabel>Author</FormLabel>
-              <Switch
-                isChecked={isAnonymous}
-                onChange={toggleAnonymous}
-                color={!isAnonymous ? "gray.500" : "black"}
-              >
-                匿名
-              </Switch>
+              <HStack spacing={4} align="center">
+                <Text fontSize="md" color="gray.700">
+                  {isAnonymous ? "匿名" : author}{" "}
+                  {/* 匿名時には「匿名」を表示 */}
+                </Text>
+                {/* 匿名か表示名を切り替えるためのSwitchコンポーネント */}
+                <Switch
+                  colorScheme="teal"
+                  isChecked={!isAnonymous}
+                  onChange={() => {
+                    // 表示名がない場合はトーストでメッセージを表示
+                    if (userDisplayName === null) {
+                      toast({
+                        title: "表示名を登録してください",
+                        description:
+                          "表示名を設定しないと、表示名で投稿できません。",
+                        status: "warning",
+                        duration: 3000,
+                        isClosable: true,
+                      });
+                      return;
+                    }
 
-              {/* 匿名ではない場合、投稿者名の入力フォームを表示 */}
-              {!isAnonymous && (
-                <Input
-                  value={author}
-                  onChange={(e) => setAuthor(e.target.value)}
-                  placeholder="投稿者名"
-                  maxLength={maxAuthorLength}
+                    setIsAnonymous(!isAnonymous);
+                    if (isAnonymous) {
+                      setAuthor(userDisplayName || "匿名");
+                    } else {
+                      setAuthor(""); // 表示名が設定されていない場合、空にする
+                    }
+                  }}
+                  isDisabled={userDisplayName === null} // ユーザーが表示名を登録していない場合はスイッチ不可
                 />
-              )}
+                <Text fontSize="sm" color="gray.500">
+                  {isAnonymous ? "匿名で投稿" : "表示名で投稿"}
+                </Text>
+              </HStack>
             </FormControl>
+
             <FormControl isInvalid={body.length > maxBodyLength}>
               <FormLabel>Body</FormLabel>
               <Textarea
