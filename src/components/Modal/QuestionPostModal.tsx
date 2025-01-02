@@ -48,7 +48,8 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
   const maxAuthorLength = 30; // 投稿者名の文字数制限
 
   // 仮の表示名を設定
-  const userDisplayName = "Faker";
+  // const userDisplayName = "Faker";
+  const userDisplayName = null; // 表示名がない状態に変更
 
   // 投稿者名を設定する処理
   useEffect(() => {
@@ -191,28 +192,33 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
                   colorScheme="teal"
                   isChecked={!isAnonymous}
                   onChange={() => {
-                    // 表示名がない場合はトーストでメッセージを表示
+                    // userDisplayNameがnullの場合はトーストを表示
                     if (userDisplayName === null) {
                       toast({
-                        title: "表示名を登録してください",
+                        title: "ユーザ名を登録してください",
                         description:
-                          "表示名を設定しないと、表示名で投稿できません。",
+                          "User Pageにてユーザ名を設定しないと、ユーザ名で投稿できません。",
                         status: "warning",
                         duration: 3000,
                         isClosable: true,
+                        containerStyle: {
+                          width: "80%", // 親要素に対しての相対的な横幅指定
+                          maxWidth: "600px", // 最大横幅の指定
+                        },
                       });
-                      return;
+                      return; // 状態の切り替えは行わない
                     }
 
+                    // userDisplayNameがnullでない場合、状態を切り替え
                     setIsAnonymous(!isAnonymous);
                     if (isAnonymous) {
-                      setAuthor(userDisplayName || "匿名");
+                      setAuthor(userDisplayName || "匿名"); // 表示名がある場合にそれを設定
                     } else {
-                      setAuthor(""); // 表示名が設定されていない場合、空にする
+                      setAuthor(""); // 表示名を切り替える
                     }
                   }}
-                  isDisabled={userDisplayName === null} // ユーザーが表示名を登録していない場合はスイッチ不可
                 />
+
                 <Text fontSize="sm" color="gray.500">
                   {isAnonymous ? "匿名で投稿" : "表示名で投稿"}
                 </Text>
