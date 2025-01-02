@@ -1,5 +1,5 @@
 import {
-  Avatar,
+  Box,
   Button,
   FormControl,
   FormLabel,
@@ -22,13 +22,12 @@ interface ProfileModalProps {
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   // 仮のデフォルト値（本来はユーザー情報を受け取るべき）
-  const [name, setName] = useState("Faker");
-  const [bio, setBio] = useState("Web developer, React enthusiast.");
-  const [avatar, setAvatar] = useState("/avatar.png");
+  const [name, setName] = useState("");
+  const [bio, setBio] = useState("");
 
   const handleSave = () => {
     // 保存処理をここに追加 (例: APIコール)
-    console.log("プロフィール更新", { name, bio, avatar });
+    console.log("プロフィール更新", { name, bio });
     onClose();
   };
 
@@ -36,55 +35,70 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent
-        mx="auto" // 左右中央揃え
-        mt="auto" // 上下中央揃え
-        my="auto" // 上下方向の余白を自動調整
+        mx="auto"
+        mt="auto"
+        my="auto"
+        maxW="lg"
+        bgGradient="linear(to-br, teal.100)"
+        boxShadow="lg"
+        borderRadius="xl"
+        overflow="hidden"
       >
-        <ModalHeader>Edit Profile</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <VStack spacing={4} align="stretch">
-            {/* プロフィール画像 */}
-            <FormControl textAlign="center">
-              <Avatar size="xl" src={avatar} mb={4} mx="auto" />
-              <Input
-                type="text"
-                placeholder="画像URLを入力"
-                value={avatar}
-                onChange={(e) => setAvatar(e.target.value)}
-              />
-            </FormControl>
-
+        <Box bgGradient="linear(to-r, teal.500, green.400)" py={6} px={4}>
+          <ModalHeader
+            color="white"
+            textAlign="center"
+            fontSize="2xl"
+            fontWeight="bold"
+          >
+            Edit Profile
+          </ModalHeader>
+          <ModalCloseButton color="white" />
+        </Box>
+        <ModalBody px={8} py={6}>
+          <VStack spacing={6} align="stretch">
             {/* 名前 */}
             <FormControl>
-              <FormLabel>Name</FormLabel>
+              <FormLabel fontSize="lg" fontWeight="medium" color="teal.700">
+                Name
+              </FormLabel>
               <Input
                 type="text"
-                placeholder="名前を入力"
+                placeholder="Enter your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                focusBorderColor="teal.400"
+                borderColor="teal.200"
               />
             </FormControl>
 
             {/* 自己紹介 */}
             <FormControl>
-              <FormLabel>Biography</FormLabel>
+              <FormLabel fontSize="lg" fontWeight="medium" color="teal.700">
+                Biography
+              </FormLabel>
               <Input
                 type="text"
-                placeholder="自己紹介を入力"
+                placeholder="Write something about yourself"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
+                focusBorderColor="teal.400"
+                borderColor="teal.200"
               />
             </FormControl>
           </VStack>
         </ModalBody>
 
-        <ModalFooter>
-          <Button colorScheme="teal" mr={3} onClick={handleSave}>
-            save
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            cancel
+        <ModalFooter justifyContent="center" py={6}>
+          <Button
+            colorScheme="teal"
+            px={6}
+            py={2}
+            fontSize="md"
+            fontWeight="medium"
+            onClick={handleSave}
+          >
+            Save Changes
           </Button>
         </ModalFooter>
       </ModalContent>
