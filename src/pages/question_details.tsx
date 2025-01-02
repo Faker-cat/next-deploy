@@ -1,7 +1,7 @@
 import { AnswerCard } from "@/components/Card/AnswerCard";
 import { DetailsQuestionCard } from "@/components/Card/DetailsQuestionCard";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
-import { Box, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -34,6 +34,11 @@ export default function QuestionDetails() {
   const { query } = router;
   const [question, setQuestion] = useState<Question | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
+  const {
+    isOpen: isPostOpen,
+    onOpen: onPostOpen,
+    onClose: onPostClose,
+  } = useDisclosure();
 
   useEffect(() => {
     if (query.id) {
@@ -148,6 +153,27 @@ export default function QuestionDetails() {
           )}
         </VStack>
       </Box>
+
+      {/* 回答投稿ボタン */}
+      <Button
+        onClick={onPostOpen}
+        variant="solid"
+        aria-label="Post Answer"
+        position="fixed" // 固定位置
+        bottom="20px" // 画面下からの距離
+        right="20px" // 画面右からの距離
+        colorScheme="orange" // ボタンのカラー
+        size="lg" // ボタンサイズ
+        borderRadius="full" // 丸みを強調
+        boxShadow="lg" // シャドウ効果
+        _hover={{ bg: "orange.400", color: "white" }} // ホバー時に色が変わる
+        _active={{ bg: "orange.600" }} // クリック時に色が変わる
+        padding="16px" // ボタン内の余白を調整
+        fontSize="lg" // フォントサイズを調整
+        color="white" // テキストの色を白に
+      >
+        Post Answer
+      </Button>
     </ContentsWithHeader>
   );
 }

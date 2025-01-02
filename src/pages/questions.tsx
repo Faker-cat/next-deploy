@@ -258,14 +258,19 @@ export default function Home() {
           </GridItem>
 
           {/* 右側 */}
-          <GridItem colSpan={{ base: 10, md: 2 }}>
-            <Box
-              height="100%"
-              bg="#253045"
-              p={4}
-              boxShadow="md"
-              borderRadius="md"
-            >
+          <GridItem
+            colSpan={{ base: 10, md: 2 }}
+            position="fixed"
+            top="105px"
+            right="0"
+            width={{ base: "100%", md: "20%" }} /* 画面幅の2割 */
+            height="100vh"
+            zIndex={10}
+            bg="#253045"
+            boxShadow="md"
+            borderRadius="lg"
+          >
+            <Box p={4} borderRadius="md" height="100%">
               {/* 検索バー */}
               <InputGroup mb={4}>
                 <Input
@@ -357,31 +362,6 @@ export default function Home() {
               >
                 Post Question
               </Button>
-
-              {/* 質問投稿ボタン
-              <IconButton
-                // onClick={onPostOpen}
-                variant="outline"
-                aria-label="Add Question"
-                icon={<AddIcon />}
-                position="absolute"
-                bottom="170px" // 下から170pxの位置に配置
-                right="85px" // 右から85pxの位置に配置
-                colorScheme="teal" // ボタンのカラーを変更
-                size="lg" // ボタンサイズ
-                borderRadius="md" // 角が丸い四角形にする
-                boxShadow="md" // シャドウ効果
-                _hover={{ bg: "teal.500", color: "white" }} // ホバー時に色が変わる
-                _active={{ bg: "teal.600" }} // クリック時に色が変わる
-                width="auto" // 幅を自動調整
-                padding="8px 16px" // ボタン内の余白を設定
-                fontSize="md" // フォントサイズ調整
-                color="teal.500" // アイコンとテキストの色
-              >
-                <Text fontSize="md" fontWeight="bold">
-                  Post Question
-                </Text>
-              </IconButton> */}
             </Box>
           </GridItem>
         </SimpleGrid>

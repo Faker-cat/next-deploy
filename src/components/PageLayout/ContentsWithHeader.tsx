@@ -8,17 +8,18 @@ type ContentsWithHeaderProps = {
 export const ContentsWithHeader = ({ children }: ContentsWithHeaderProps) => {
   return (
     <>
-      <Header />
+      {/* Header を固定 */}
+      <Box position="fixed" top="0" left="0" right="0" zIndex="1000">
+        <Header />
+      </Box>
+
+      {/* 子コンテンツを表示 */}
       <Box
         as="main"
-        pt={5}
-        /*header用に上部のパディング*/ px={4} /*左右のパディング*/
+        pt="105px" // ヘッダーの高さに合わせた余白を設定
+        px={4} // 左右のパディング
       >
-        <Flex minH="100vh">
-          {" "}
-          {/* 64pxはヘッダーの高さを仮定 */}
-          {children}
-        </Flex>
+        <Flex minH="100vh">{children}</Flex>
       </Box>
     </>
   );

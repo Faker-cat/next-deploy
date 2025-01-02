@@ -77,7 +77,7 @@ export function Header() {
                   cursor="pointer"
                   borderRadius="md"
                   _hover={{ bg: "gray.100" }} // ホバー時の背景色を薄い灰色に
-                  onClick={() => handleMenuClick("/auth")}
+                  onClick={() => handleMenuClick("/questions")}
                 >
                   Query
                 </Box>
@@ -87,7 +87,7 @@ export function Header() {
                   cursor="pointer"
                   borderRadius="md"
                   _hover={{ bg: "gray.100" }} // ホバー時の背景色を薄い灰色に
-                  onClick={() => handleMenuClick("/user")}
+                  onClick={() => handleMenuClick("/users")}
                 >
                   User Page
                 </Box>
