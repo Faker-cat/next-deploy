@@ -8,30 +8,31 @@ export default function Callback() {
 
   useEffect(() => {
     const updateUser = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error(error);
-        return;
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error(error);
+          return;
+        }
+        const get_url = `${process.env.NEXT_PUBLIC_API_URL}/users/${data.session?.user.id}/exists`;
+        const res = await axios.get(get_url);
+        if (res.data.exists) {
+          return;
+        }
+        const post_url = `${process.env.NEXT_PUBLIC_API_URL}/users`;
+        const body = {
+          id: data.session?.user.id ?? "",
+          display_name: data.session?.user.user_metadata["name"] ?? "---",
+          bio: "",
+        };
+        await axios.post(post_url, body);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        router.replace("/questions");
       }
-      const get_url = `${process.env.NEXT_PUBLIC_API_URL}/users/${data.session?.user.id}/users`;
-      const res = await axios.get(get_url);
-      switch (res.status) {
-        case 200:
-          break;
-        case 404:
-          const post_url = `${process.env.NEXT_PUBLIC_API_URL}/users`;
-          const body = {
-            id: data.session?.user.id,
-            display_name: data.session?.user.user_metadata["name"],
-            bio: "",
-          };
-          await axios.post(post_url, body);
-          break;
-        default:
-          console.error(res);
-      }
-      router.replace("/questions");
     };
+    updateUser();
   }, []);
 
   return <></>;

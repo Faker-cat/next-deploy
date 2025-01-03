@@ -30,7 +30,7 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
       //setSession(session);
       if (session) {
         if (pathname === "/") {
-          router.replace("/questions");
+          router.replace("/callback");
           return;
         }
         setIsReady(true);
