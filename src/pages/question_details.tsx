@@ -2,33 +2,11 @@ import { AnswerCard } from "@/components/Card/AnswerCard";
 import { DetailsQuestionCard } from "@/components/Card/DetailsQuestionCard";
 import { AnswerPostModal } from "@/components/Modal/AnswerPostModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
+import { Answer } from "@/types/answer";
+import { Question } from "@/types/question";
 import { Box, Button, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
-type Question = {
-  id: number;
-  user_name: string;
-  title: string;
-  content: string;
-  user_id: number;
-  is_anonymous: boolean;
-  created_ad: string;
-  likes: number;
-  bookmarks: number;
-  isLiked: boolean;
-  isBookmarked: boolean;
-  tags: string[];
-};
-
-type Answer = {
-  id: number;
-  user_name: string;
-  content: string;
-  created_ad: string;
-  likes: number;
-  isLiked: boolean;
-};
 
 export default function QuestionDetails() {
   const router = useRouter();

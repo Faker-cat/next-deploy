@@ -1,6 +1,7 @@
 import { QuestionCard } from "@/components/Card/QuestionCard";
 import { QuestionPostModal } from "@/components/Modal/QuestionPostModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
+import { Question } from "@/types/question";
 import {
   Box,
   Button,
@@ -20,22 +21,6 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-// Questionデータの型定義
-type Question = {
-  id: number;
-  user_name: string;
-  title: string;
-  content: string;
-  user_id: number;
-  is_anonymous: boolean;
-  created_ad: string;
-  likes: number;
-  bookmarks: number;
-  isLiked: boolean; // いいね状態
-  isBookmarked: boolean; // ブックマーク状態
-  tags: string[];
-};
-
 export default function Home() {
   const router = useRouter();
   const {
@@ -44,7 +29,6 @@ export default function Home() {
     onClose: onPostClose,
   } = useDisclosure();
 
-  // サンプルデータ
   const [questions, setQuestions] = useState<Question[]>([]);
 
   async function handleGet() {
@@ -187,6 +171,8 @@ export default function Home() {
 
   return (
     <>
+      {/* モーダルの定義 */}
+      <QuestionPostModal isOpen={isPostOpen} onClose={onPostClose} />
       <Head>
         <title>Query</title>
         <link rel="icon" href="/favicon.ico" />
@@ -366,9 +352,6 @@ export default function Home() {
           </GridItem>
         </SimpleGrid>
       </ContentsWithHeader>
-
-      {/* モーダルの定義 */}
-      <QuestionPostModal isOpen={isPostOpen} onClose={onPostClose} />
     </>
   );
 }

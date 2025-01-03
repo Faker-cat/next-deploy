@@ -3,6 +3,7 @@ import { QuestionCard } from "@/components/Card/QuestionCard";
 import ProfileModal from "@/components/Modal/ProfileModal";
 import QuestionDeleteModal from "@/components/Modal/QuestionDeleteModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
+import { Question } from "@/types/question";
 import {
   Box,
   Button,
@@ -25,22 +26,6 @@ import {
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
-// Questionデータの型定義
-type Question = {
-  id: number;
-  user_name: string;
-  title: string;
-  content: string;
-  user_id: number;
-  is_anonymous: boolean;
-  created_ad: string;
-  likes: number;
-  bookmarks: number;
-  isLiked: boolean;
-  isBookmarked: boolean;
-  tags: string[];
-};
 
 export default function UserPage() {
   const router = useRouter();
@@ -105,6 +90,28 @@ export default function UserPage() {
     bio: "Web developer, React enthusiast.",
     avatar: "/avatar.png", // 仮のアバター画像URL
   };
+
+  // const [users, setUsers] = useState<User[]>([]);
+
+  //  async function handleGet() {
+  //    try {
+  //      const url = process.env.NEXT_PUBLIC_API_URL + "/users/{id}/users";
+  //      const res = await axios.get(url);
+  //      if (res.status !== 200) {
+  //        throw new Error("Failed to fetch questions");
+  //      }
+  //      setQuestions(res.data as Question[]);
+  //    } catch (err) {
+  //      console.error(err);
+  //    }
+  //  }
+
+  //  useEffect(() => {
+  //    const init = async () => {
+  //      await handleGet();
+  //    };
+  //    init();
+  //  }, []);
 
   // 検索状態管理
   const [searchKeyword, setSearchKeyword] = useState<string>("");

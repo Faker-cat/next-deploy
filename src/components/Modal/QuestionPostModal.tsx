@@ -51,6 +51,40 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
   // const userDisplayName = "Faker";
   const userDisplayName = null; // 表示名がない状態に変更
 
+  // async function handlePost() {
+  //   setIsLoading(true);
+  //   try {
+  //     const url = process.env.NEXT_PUBLIC_API_URL + "/questions";
+  //     const data = {
+  //       title: title,
+  //       user_id: user_id,
+  //       is_anonymous: is_anonymous,
+  //       content:content,
+  //     };
+  //     const res = await axios.post(url, data);
+  //     if (res.status !== 200) {
+  //       throw new Error("Failed to post user");
+  //     }
+  //     setUsers([...users, res.data as User]);
+  //     toast({
+  //       title: "User added !",
+  //       status: "success",
+  //       duration: 2000,
+  //       isClosable: true,
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast({
+  //       title: "Failed to add user",
+  //       status: "error",
+  //       duration: 2000,
+  //       isClosable: true,
+  //     });
+  //   }
+  //   setIsLoading(false);
+  //   onClose();
+  // }
+
   // 投稿者名を設定する処理
   useEffect(() => {
     if (userDisplayName) {
