@@ -195,15 +195,15 @@ export function QuestionPostModal({ isOpen, onClose }: Props) {
                     // userDisplayNameがnullの場合はトーストを表示
                     if (userDisplayName === null) {
                       toast({
-                        title: "ユーザ名を登録してください",
+                        title: "ユーザー名が設定されていません",
                         description:
-                          "User Pageにてユーザ名を設定しないと、ユーザ名で投稿できません。",
+                          "User Pageにてユーザー名を設定してください。",
                         status: "warning",
                         duration: 3000,
                         isClosable: true,
                         containerStyle: {
                           width: "80%", // 親要素に対しての相対的な横幅指定
-                          maxWidth: "600px", // 最大横幅の指定
+                          maxWidth: "450px", // 最大横幅の指定
                         },
                       });
                       return; // 状態の切り替えは行わない

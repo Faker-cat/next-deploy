@@ -1,5 +1,6 @@
 import { AnswerCard } from "@/components/Card/AnswerCard";
 import { DetailsQuestionCard } from "@/components/Card/DetailsQuestionCard";
+import { AnswerPostModal } from "@/components/Modal/AnswerPostModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import { Box, Button, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -153,6 +154,9 @@ export default function QuestionDetails() {
           )}
         </VStack>
       </Box>
+
+      {/* モーダルの定義 */}
+      <AnswerPostModal isOpen={isPostOpen} onClose={onPostClose} />
 
       {/* 回答投稿ボタン */}
       <Button
