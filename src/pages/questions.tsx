@@ -103,9 +103,9 @@ export default function Home() {
           keywords.every(
             (keyword) =>
               q.title.toLowerCase().includes(keyword) ||
-              q.user_name.toLowerCase().includes(keyword) ||
+              q.user.display_name.toLowerCase().includes(keyword) ||
               q.content.toLowerCase().includes(keyword) ||
-              q.tags.some((tag) => tag.toLowerCase().includes(keyword))
+              q.tags.some((tag) => tag.name.toLowerCase().includes(keyword))
           )
         )
       );
@@ -210,11 +210,11 @@ export default function Home() {
                       >
                         <QuestionCard
                           id={e.id}
-                          user_name={e.user_name}
+                          user_name={e.user.display_name}
                           title={e.title}
                           content={e.content}
                           is_anonymous={e.is_anonymous}
-                          created_ad={e.created_ad}
+                          created_at={e.created_at}
                           likes={e.likes}
                           bookmarks={e.bookmarks}
                           isLiked={e.isLiked}

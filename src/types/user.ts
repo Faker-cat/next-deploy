@@ -1,6 +1,6 @@
 // Userデータの型定義
 type User = {
-  id: number;
+  id: string;
   display_name: string;
   bio: string;
   created_at: string;

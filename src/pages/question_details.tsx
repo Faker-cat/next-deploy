@@ -26,18 +26,31 @@ export default function QuestionDetails() {
       // サンプルデータ
       const sampleQuestion: Question = {
         id: questionId,
-        user_name: "Faker",
         title: "EXAMPLE",
+        user: {
+          id: "489bee16-570f-bec6-b058-b9f1a262f641",
+          display_name: "faker",
+          bio: "aaa",
+          created_at: "2024-12-11",
+        },
         content:
           "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。",
-        user_id: 1,
         is_anonymous: true,
-        created_ad: "2024-12-11",
+        created_at: "2024-12-11",
         likes: 10,
         bookmarks: 5,
         isLiked: false,
         isBookmarked: false,
-        tags: ["React", "ChakraUI", "TypeScript"],
+        tags: [
+          {
+            id: 1,
+            name: "Python",
+          },
+          {
+            id: 2,
+            name: "SQLAlchemy",
+          },
+        ],
       };
 
       const sampleAnswers: Answer[] = [
@@ -73,7 +86,7 @@ export default function QuestionDetails() {
       <Box p={4}>
         {/* 質問カード */}
         <DetailsQuestionCard
-          {...question}
+          question={question}
           onToggleLike={() =>
             setQuestion((prev) =>
               prev

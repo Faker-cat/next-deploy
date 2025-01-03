@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import { FaBookmark, FaHeart, FaRegBookmark, FaRegHeart } from "react-icons/fa";
+import { Question } from "../../types/question";
 
 // ポップアニメーションのキーフレーム
 const popAnimation = keyframes`
@@ -31,57 +32,19 @@ const colorPalette = [
   "pink",
 ];
 
-// タグカラーをキャッシュするマップ
-const tagColorCache: Record<string, string> = {};
-
 // ランダムな色を生成する関数
-function getRandomColor(tag: string): string {
-  // 既に色が割り当てられている場合はキャッシュを使用
-  if (tagColorCache[tag]) {
-    return tagColorCache[tag];
-  }
-
-  // ランダムに色を選択
-  const randomColor =
-    colorPalette[Math.floor(Math.random() * colorPalette.length)];
-
-  // キャッシュに保存
-  tagColorCache[tag] = randomColor;
-
-  return randomColor;
+function getColor(tagId: number): string {
+  return colorPalette[tagId % colorPalette.length];
 }
 
 type QuestionCardProps = {
-  id: number;
-  user_name: string;
-  title: string;
-  content: string;
-  is_anonymous: boolean;
-  created_ad: string;
-  likes: number;
-  bookmarks: number;
-  isLiked: boolean; // いいね状態
-  isBookmarked: boolean; // ブックマーク状態
-  tags: string[]; // タグ情報を追加
+  question: Question;
   onToggleLike: (e: React.MouseEvent) => void; // いいね切り替え関数（イベントを受け取る）
   onToggleBookmark: (e: React.MouseEvent) => void; // ブックマーク切り替え関数（イベントを受け取る）
 };
 
 export function DetailsQuestionCard(props: QuestionCardProps) {
-  const {
-    title,
-    user_name,
-    content,
-    is_anonymous,
-    created_ad,
-    likes,
-    bookmarks,
-    isLiked,
-    isBookmarked,
-    tags,
-    onToggleLike,
-    onToggleBookmark,
-  } = props;
+  const { question, onToggleLike, onToggleBookmark } = props;
 
   return (
     <Box
@@ -97,37 +60,38 @@ export function DetailsQuestionCard(props: QuestionCardProps) {
         {/* タイトル */}
         <Box>
           <Text fontSize="lg" fontWeight="bold" color="teal.600">
-            {title}
+            {question.title}
           </Text>
         </Box>
 
         {/* 投稿者と日時 */}
         <Box>
           <Text fontSize="sm" color="gray.500">
-            投稿者: {is_anonymous ? "匿名" : user_name}
+            投稿者:{" "}
+            {question.is_anonymous ? "匿名" : question.user.display_name}
           </Text>
           <Text fontSize="xs" color="gray.400">
-            投稿日時: {created_ad}
+            投稿日時: {question.created_at}
           </Text>
         </Box>
 
         {/* 本文 */}
         <Box>
           <Text fontSize="md" color="gray.700" whiteSpace="pre-line">
-            {content}
+            {question.content}
           </Text>
         </Box>
 
         {/* タグ表示 */}
         <Wrap spacing={2} mt={1}>
-          {tags.map((tag) => (
+          {question.tags.map((tag) => (
             <Tag
-              key={tag}
-              bg={`${getRandomColor(tag)}.200`} // タグの色を取得
-              color={`${getRandomColor(tag)}.700`}
+              key={tag.id}
+              bg={`${getColor(tag.id)}.200`} // タグの色を取得
+              color={`${getColor(tag.id)}.700`}
               size="sm"
             >
-              <TagLabel>{tag}</TagLabel>
+              <TagLabel>{tag.name}</TagLabel>
             </Tag>
           ))}
         </Wrap>
@@ -138,7 +102,7 @@ export function DetailsQuestionCard(props: QuestionCardProps) {
         <HStack>
           <IconButton
             aria-label="like"
-            icon={isLiked ? <FaHeart color="red" /> : <FaRegHeart />}
+            icon={question.isLiked ? <FaHeart color="red" /> : <FaRegHeart />}
             size="sm"
             variant="ghost"
             onClick={(e) => {
@@ -146,16 +110,22 @@ export function DetailsQuestionCard(props: QuestionCardProps) {
               onToggleLike(e); // いいね切り替え
             }}
             sx={{
-              animation: isLiked ? `${popAnimation} 0.3s ease` : "none",
+              animation: question.isLiked
+                ? `${popAnimation} 0.3s ease`
+                : "none",
             }}
           />
-          <Text fontSize="sm">{likes}</Text>
+          <Text fontSize="sm">{question.likes}</Text>
         </HStack>
         <HStack spacing={0.1}>
           <IconButton
             aria-label="bookmark"
             icon={
-              isBookmarked ? <FaBookmark color="orange" /> : <FaRegBookmark />
+              question.isBookmarked ? (
+                <FaBookmark color="orange" />
+              ) : (
+                <FaRegBookmark />
+              )
             }
             size="sm"
             variant="ghost"
@@ -164,10 +134,12 @@ export function DetailsQuestionCard(props: QuestionCardProps) {
               onToggleBookmark(e); // ブックマーク切り替え
             }}
             sx={{
-              animation: isBookmarked ? `${popAnimation} 0.3s ease` : "none",
+              animation: question.isBookmarked
+                ? `${popAnimation} 0.3s ease`
+                : "none",
             }}
           />
-          <Text fontSize="sm">{bookmarks}</Text>
+          <Text fontSize="sm">{question.bookmarks}</Text>
         </HStack>
       </HStack>
     </Box>

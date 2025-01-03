@@ -1,3 +1,4 @@
+import { Tag as TagModel } from "@/types/tag";
 import {
   Box,
   HStack,
@@ -31,24 +32,9 @@ const colorPalette = [
   "pink",
 ];
 
-// タグカラーをキャッシュするマップ
-const tagColorCache: Record<string, string> = {};
-
 // ランダムな色を生成する関数
-function getRandomColor(tag: string): string {
-  // 既に色が割り当てられている場合はキャッシュを使用
-  if (tagColorCache[tag]) {
-    return tagColorCache[tag];
-  }
-
-  // ランダムに色を選択
-  const randomColor =
-    colorPalette[Math.floor(Math.random() * colorPalette.length)];
-
-  // キャッシュに保存
-  tagColorCache[tag] = randomColor;
-
-  return randomColor;
+function getColor(tagId: number): string {
+  return colorPalette[tagId % colorPalette.length];
 }
 
 type QuestionCardProps = {
@@ -57,12 +43,12 @@ type QuestionCardProps = {
   title: string;
   content: string;
   is_anonymous: boolean;
-  created_ad: string;
+  created_at: string;
   likes: number;
   bookmarks: number;
   isLiked: boolean; // いいね状態
   isBookmarked: boolean; // ブックマーク状態
-  tags: string[]; // タグ情報を追加
+  tags: TagModel[]; // タグ情報を追加
   onToggleLike: (e: React.MouseEvent) => void; // いいね切り替え関数（イベントを受け取る）
   onToggleBookmark: (e: React.MouseEvent) => void; // ブックマーク切り替え関数（イベントを受け取る）
   onClick: () => void; // 詳細ページに遷移するためのクリックハンドラ
@@ -83,7 +69,7 @@ export function QuestionCard(props: QuestionCardProps) {
     user_name,
     content,
     is_anonymous,
-    created_ad,
+    created_at,
     likes,
     bookmarks,
     isLiked,
@@ -120,7 +106,7 @@ export function QuestionCard(props: QuestionCardProps) {
 
           {/* 投稿時刻 */}
           <Text fontSize="xs" color="gray.400">
-            投稿日時: {created_ad}
+            投稿日時: {created_at}
           </Text>
 
           {/* 本文 */}
@@ -135,12 +121,12 @@ export function QuestionCard(props: QuestionCardProps) {
         <Wrap spacing={2} mt={1}>
           {tags.map((tag) => (
             <Tag
-              key={tag}
-              bg={`${getRandomColor(tag)}.200`} // タグの色を取得
-              color={`${getRandomColor(tag)}.700`}
+              key={tag.id}
+              bg={`${getColor(tag.id)}.200`} // タグの色を取得
+              color={`${getColor(tag.id)}.700`}
               size="sm"
             >
-              <TagLabel>{tag}</TagLabel>
+              <TagLabel>{tag.name}</TagLabel>
             </Tag>
           ))}
         </Wrap>
