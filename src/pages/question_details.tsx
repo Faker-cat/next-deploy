@@ -2,13 +2,19 @@ import { AnswerCard } from "@/components/Card/AnswerCard";
 import { DetailsQuestionCard } from "@/components/Card/DetailsQuestionCard";
 import { AnswerPostModal } from "@/components/Modal/AnswerPostModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
+import { sessionState } from "@/libs/states";
 import { Answer } from "@/types/answer";
+import { Like } from "@/types/like";
 import { Question } from "@/types/question";
 import { Box, Button, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import { Session } from "@supabase/supabase-js";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 
 export default function QuestionDetails() {
+  const [session] = useRecoilState<Session | null>(sessionState);
   const router = useRouter();
   const { query } = router;
   const [question, setQuestion] = useState<Question | null>(null);
@@ -37,9 +43,8 @@ export default function QuestionDetails() {
           "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。",
         is_anonymous: true,
         created_at: "2024-12-11",
-        likes: 10,
+        likes: [{ id: 1, user_id: "489bee16-570f-bec6-b058-b9f1a262f641" }],
         bookmarks: 5,
-        isLiked: false,
         isBookmarked: false,
         tags: [
           {
@@ -77,6 +82,35 @@ export default function QuestionDetails() {
     }
   }, [query.id]);
 
+  // いいねの切り替え処理
+  const toggleLike = () => {
+    if (!session?.user.id) return;
+    if (!question) return;
+
+    const createLike = async () => {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/likes?user_id=${session?.user.id}&question_id=${question.id}`;
+      await axios.post(url);
+    };
+    const deleteLike = async () => {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/likes?user_id=${session?.user.id}&question_id=${question.id}`;
+      await axios.delete(url);
+    };
+
+    if (question?.likes.find((l) => l.user_id === session?.user.id)) {
+      deleteLike();
+      const newLikes = question.likes.filter(
+        (l) => l.user_id !== session?.user.id
+      );
+      setQuestion((prev) => (prev ? { ...prev, likes: newLikes } : null));
+    } else {
+      createLike();
+      const newLike = { id: 0, user_id: session?.user.id } as Like;
+      setQuestion((prev) =>
+        prev ? { ...prev, likes: [...prev.likes, newLike] } : null
+      );
+    }
+  };
+
   if (!question) {
     return <Text>Loading...</Text>;
   }
@@ -87,17 +121,7 @@ export default function QuestionDetails() {
         {/* 質問カード */}
         <DetailsQuestionCard
           question={question}
-          onToggleLike={() =>
-            setQuestion((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    likes: prev.isLiked ? prev.likes - 1 : prev.likes + 1,
-                    isLiked: !prev.isLiked,
-                  }
-                : null
-            )
-          }
+          onToggleLike={toggleLike}
           onToggleBookmark={() =>
             setQuestion((prev) =>
               prev

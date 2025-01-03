@@ -39,53 +39,27 @@ export default function UserPage() {
   const [questions, setQuestions] = useState<Question[]>([
     {
       id: 1,
-      user_name: "Faker",
+      user: {
+        id: "1",
+        display_name: "Faker",
+        bio: "Web developer, React enthusiast.",
+        created_at: "2024-12-11",
+      },
       title: "EXAMPLE",
       content:
         "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。まだ百字じゃないの？まだ？あいうえお",
-      user_id: 1,
       is_anonymous: false,
-      created_ad: "2024-12-11",
-      likes: 10,
+      created_at: "2024-12-11",
+      likes: [],
       bookmarks: 5,
-      isLiked: true,
       isBookmarked: false,
-      tags: ["JavaScript", "React", "Backend"],
-    },
-    {
-      id: 2,
-      user_name: "eto",
-      title: "Another Question",
-      content:
-        "Here's another example question with a moderate length content.",
-      user_id: 2,
-      is_anonymous: false,
-      created_ad: "2024-12-10",
-      likes: 3,
-      bookmarks: 2,
-      isLiked: true,
-      isBookmarked: false,
-      tags: ["Backend", "Node.js"],
-    },
-    {
-      id: 3,
-      user_name: "davis",
-      title: "質問例！",
-      content: "この質問をブックマークした質問に表示したい",
-      user_id: 3,
-      is_anonymous: false,
-      created_ad: "2024-12-15",
-      likes: 3,
-      bookmarks: 2,
-      isLiked: false,
-      isBookmarked: true,
-      tags: ["Backend", "健康"],
+      tags: [],
     },
   ]);
 
   // ユーザー情報
   const user = {
-    id: 1,
+    id: "1",
     name: "Faker",
     bio: "Web developer, React enthusiast.",
     avatar: "/avatar.png", // 仮のアバター画像URL
@@ -156,14 +130,14 @@ export default function UserPage() {
           <Box flex="1">
             <QuestionCard
               id={e.id}
-              user_name={e.user_name}
+              user_name={e.user.display_name}
               title={e.title}
               content={e.content}
               is_anonymous={e.is_anonymous}
-              created_ad={e.created_ad}
-              likes={e.likes}
+              created_at={e.created_at}
+              likes={e.likes.length}
               bookmarks={e.bookmarks}
-              isLiked={e.isLiked}
+              isLiked={e.likes.some((l) => l.user_id === user.id)}
               isBookmarked={e.isBookmarked}
               tags={e.tags}
               onToggleLike={() => toggleLike(e.id)}
@@ -173,7 +147,7 @@ export default function UserPage() {
           </Box>
 
           {/* ボタン部分 (自分の質問のみ表示) */}
-          {e.user_id === user.id && (
+          {e.user.id === user.id && (
             <Box display="flex" gap="8px" ml={4}>
               <Button
                 size="sm"
@@ -223,11 +197,13 @@ export default function UserPage() {
     switch (tabIndex) {
       case 0:
         // 自分の質問
-        filtered = questions.filter((q) => q.user_id === user.id);
+        filtered = questions.filter((q) => q.user.id === user.id);
         break;
       case 1:
         // いいねした質問
-        filtered = questions.filter((q) => q.isLiked);
+        filtered = questions.filter((q) =>
+          q.likes.some((l) => l.user_id === user.id)
+        );
         break;
       case 2:
         // ブックマークした質問
@@ -246,9 +222,9 @@ export default function UserPage() {
         keywords.every(
           (keyword) =>
             q.title.toLowerCase().includes(keyword) ||
-            q.user_name.toLowerCase().includes(keyword) ||
+            q.user.display_name.toLowerCase().includes(keyword) ||
             q.content.toLowerCase().includes(keyword) ||
-            q.tags.some((tag) => tag.toLowerCase().includes(keyword))
+            q.tags.some((tag) => tag.name.toLowerCase().includes(keyword))
         )
       );
     }
@@ -262,18 +238,19 @@ export default function UserPage() {
   }, [searchKeyword, selectedTab, questions]);
 
   // いいねの切り替え処理
+  // TODO: implement
   const toggleLike = (id: number) => {
-    setQuestions((prev) =>
-      prev.map((q) =>
-        q.id === id
-          ? {
-              ...q,
-              likes: q.isLiked ? q.likes - 1 : q.likes + 1,
-              isLiked: !q.isLiked,
-            }
-          : q
-      )
-    );
+    // setQuestions((prev) =>
+    //   prev.map((q) =>
+    //     q.id === id
+    //       ? {
+    //           ...q,
+    //           likes: q.isLiked ? q.likes - 1 : q.likes + 1,
+    //           isLiked: !q.isLiked,
+    //         }
+    //       : q
+    //   )
+    // );
   };
 
   // ブックマークの切り替え処理

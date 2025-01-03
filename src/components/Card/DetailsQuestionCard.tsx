@@ -9,7 +9,10 @@ import {
   Wrap,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
+import { Session } from "@supabase/supabase-js";
 import { FaBookmark, FaHeart, FaRegBookmark, FaRegHeart } from "react-icons/fa";
+import { useRecoilState } from "recoil";
+import { sessionState } from "../../libs/states";
 import { Question } from "../../types/question";
 
 // ポップアニメーションのキーフレーム
@@ -44,7 +47,9 @@ type QuestionCardProps = {
 };
 
 export function DetailsQuestionCard(props: QuestionCardProps) {
+  const [session] = useRecoilState<Session | null>(sessionState);
   const { question, onToggleLike, onToggleBookmark } = props;
+  const isLiked = question.likes.some((l) => l.user_id === session?.user.id);
 
   return (
     <Box
@@ -102,7 +107,7 @@ export function DetailsQuestionCard(props: QuestionCardProps) {
         <HStack>
           <IconButton
             aria-label="like"
-            icon={question.isLiked ? <FaHeart color="red" /> : <FaRegHeart />}
+            icon={isLiked ? <FaHeart color="red" /> : <FaRegHeart />}
             size="sm"
             variant="ghost"
             onClick={(e) => {
@@ -110,12 +115,10 @@ export function DetailsQuestionCard(props: QuestionCardProps) {
               onToggleLike(e); // いいね切り替え
             }}
             sx={{
-              animation: question.isLiked
-                ? `${popAnimation} 0.3s ease`
-                : "none",
+              animation: isLiked ? `${popAnimation} 0.3s ease` : "none",
             }}
           />
-          <Text fontSize="sm">{question.likes}</Text>
+          <Text fontSize="sm">{question.likes.length}</Text>
         </HStack>
         <HStack spacing={0.1}>
           <IconButton

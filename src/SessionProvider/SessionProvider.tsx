@@ -1,10 +1,10 @@
+import { sessionState } from "@/libs/states";
+import supabase from "@/libs/supabase";
+import { Session } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-//import { useRecoilState } from "recoil";
-
-//import { sessionState } from "@/libs/states";
-import supabase from "@/libs/supabase";
+import { useRecoilState } from "recoil";
 
 type SessionProviderProps = {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isReady, setIsReady] = useState(false);
-  //const [, setSession] = useRecoilState<Session | null>(sessionState);
+  const [, setSession] = useRecoilState<Session | null>(sessionState);
 
   useEffect(() => {
     const sessionUpdate = async () => {

@@ -1,6 +1,7 @@
 import { QuestionCard } from "@/components/Card/QuestionCard";
 import { QuestionPostModal } from "@/components/Modal/QuestionPostModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
+import { sessionState } from "@/libs/states";
 import { Question } from "@/types/question";
 import {
   Box,
@@ -16,12 +17,15 @@ import {
   WrapItem,
   useDisclosure,
 } from "@chakra-ui/react";
+import { Session } from "@supabase/supabase-js";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 
 export default function Home() {
+  const [session] = useRecoilState<Session | null>(sessionState);
   const router = useRouter();
   const {
     isOpen: isPostOpen,
@@ -136,17 +140,43 @@ export default function Home() {
 
   // いいねの切り替え処理
   const toggleLike = (id: number) => {
-    setQuestions((prev) =>
-      prev.map((q) =>
-        q.id === id
-          ? {
-              ...q,
-              likes: q.isLiked ? q.likes - 1 : q.likes + 1,
-              isLiked: !q.isLiked,
-            }
-          : q
-      )
-    );
+    const createLike = async () => {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/likes?user_id=${session?.user.id}&question_id=${id}`;
+      await axios.post(url);
+    };
+    const deleteLike = async () => {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/likes?user_id=${session?.user.id}&question_id=${id}`;
+      await axios.delete(url);
+    };
+    if (!session?.user.id) return;
+    const targetQuestion = questions.find((q) => q.id === id);
+    if (!targetQuestion) return;
+
+    if (targetQuestion?.likes.find((l) => l.user_id === session?.user.id)) {
+      deleteLike();
+      setQuestions((prev) =>
+        prev.map((q) =>
+          q.id === id
+            ? {
+                ...q,
+                likes: q.likes.filter((l) => l.user_id !== session?.user.id),
+              }
+            : q
+        )
+      );
+    } else {
+      createLike();
+      setQuestions((prev) =>
+        prev.map((q) =>
+          q.id === id
+            ? {
+                ...q,
+                likes: [...q.likes, { id: 0, user_id: session?.user.id }],
+              }
+            : q
+        )
+      );
+    }
   };
 
   // ブックマークの切り替え処理
@@ -215,9 +245,11 @@ export default function Home() {
                           content={e.content}
                           is_anonymous={e.is_anonymous}
                           created_at={e.created_at}
-                          likes={e.likes}
+                          likes={e.likes.length}
                           bookmarks={e.bookmarks}
-                          isLiked={e.isLiked}
+                          isLiked={e.likes.some(
+                            (l) => l.user_id === session?.user.id
+                          )}
                           isBookmarked={e.isBookmarked}
                           tags={e.tags}
                           onClick={() => viewDetails(e.id)}
