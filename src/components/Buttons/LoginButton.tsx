@@ -1,61 +1,56 @@
-import { Button } from "@chakra-ui/react";
-
 import supabase from "@/libs/supabase";
-
 import {
+  Button,
   Flex,
-  Heading,
+  VStack,
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
 
 export function LoginButton() {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // async function GetSession() {
-
-  //   const{data,/*error*/} = await supabase.auth.getSession()
-  //   console.log(data)
-
-  // }
-
   const { toggleColorMode } = useColorMode();
-  const formBackGround = useColorModeValue("gray.100", "gray.700");
+  const formBackground = useColorModeValue("white", "gray.700");
+  const formShadow = useColorModeValue("lg", "dark-lg");
 
   return (
-    <>
-      <Flex height="50vh" alignItems="center" justifyContent="center">
-        <Flex direction="column" background={formBackGround} p={12} rounded={6}>
-          <Heading mb={6}>Log in</Heading>
-          <Button
-            colorScheme="blue"
-            variant="outline"
-            as="a"
-            onClick={() =>
-              supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: { redirectTo: "/callback" },
-              })
-            }
-          >
-            Google
-          </Button>
-          <Button
-            colorScheme="purple"
-            variant="outline"
-            as="a"
-            onClick={() =>
-              supabase.auth.signInWithOAuth({
-                provider: "github",
-                options: { redirectTo: "/callback" },
-              })
-            }
-          >
-            GitHub
-          </Button>
-          <Button onClick={toggleColorMode}>Toggle Color Mode</Button>
-        </Flex>
-      </Flex>
-    </>
+    <Flex
+      direction="column"
+      p={8}
+      rounded="lg"
+      bg={formBackground}
+      shadow={formShadow}
+      alignItems="center"
+      w="full"
+    >
+      <VStack spacing={4} w="full">
+        <Button
+          w="full"
+          colorScheme="blue"
+          onClick={() =>
+            supabase.auth.signInWithOAuth({
+              provider: "google",
+              options: { redirectTo: "/callback" },
+            })
+          }
+        >
+          Continue with Google
+        </Button>
+        <Button
+          w="full"
+          colorScheme="purple"
+          onClick={() =>
+            supabase.auth.signInWithOAuth({
+              provider: "github",
+              options: { redirectTo: "/callback" },
+            })
+          }
+        >
+          Continue with GitHub
+        </Button>
+        <Button w="full" onClick={toggleColorMode}>
+          Toggle Color Mode
+        </Button>
+      </VStack>
+    </Flex>
   );
 }

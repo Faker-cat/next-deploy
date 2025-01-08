@@ -4,6 +4,7 @@ import ProfileModal from "@/components/Modal/ProfileModal";
 import QuestionDeleteModal from "@/components/Modal/QuestionDeleteModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import { Question } from "@/types/question";
+import { User } from "@/types/user";
 import {
   Box,
   Button,
@@ -39,56 +40,87 @@ export default function UserPage() {
   const [questions, setQuestions] = useState<Question[]>([
     {
       id: 1,
-      user_name: "Faker",
+      user: {
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        display_name: "Faker",
+        bio: "あいうえお",
+        created_at: "2024-1-8",
+      },
       title: "EXAMPLE",
       content:
         "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。まだ百字じゃないの？まだ？あいうえお",
-      user_id: 1,
       is_anonymous: false,
-      created_ad: "2024-12-11",
+      created_at: "2024-12-11",
       likes: 10,
       bookmarks: 5,
       isLiked: true,
       isBookmarked: false,
-      tags: ["JavaScript", "React", "Backend"],
+      tags: [
+        {
+          id: 1,
+          name: "web",
+        },
+        {
+          id: 2,
+          name: "fastapi",
+        },
+      ],
     },
     {
       id: 2,
-      user_name: "eto",
+      user: {
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+        display_name: "eto",
+        bio: "かきくけこ",
+        created_at: "2024-1-8",
+      },
       title: "Another Question",
       content:
         "Here's another example question with a moderate length content.",
-      user_id: 2,
       is_anonymous: false,
-      created_ad: "2024-12-10",
+      created_at: "2024-12-10",
       likes: 3,
       bookmarks: 2,
       isLiked: true,
       isBookmarked: false,
-      tags: ["Backend", "Node.js"],
+      tags: [
+        {
+          id: 3,
+          name: "next",
+        },
+      ],
     },
     {
       id: 3,
-      user_name: "davis",
+      user: {
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+        display_name: "davis",
+        bio: "さしすせそ",
+        created_at: "2024-1-8",
+      },
       title: "質問例！",
       content: "この質問をブックマークした質問に表示したい",
-      user_id: 3,
       is_anonymous: false,
-      created_ad: "2024-12-15",
+      created_at: "2024-12-15",
       likes: 3,
       bookmarks: 2,
       isLiked: false,
       isBookmarked: true,
-      tags: ["Backend", "健康"],
+      tags: [
+        {
+          id: 4,
+          name: "web",
+        },
+      ],
     },
   ]);
 
   // ユーザー情報
-  const user = {
-    id: 1,
-    name: "Faker",
+  const user: User = {
+    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    display_name: "Faker",
     bio: "Web developer, React enthusiast.",
-    avatar: "/avatar.png", // 仮のアバター画像URL
+    created_at: "2024-12-15",
   };
 
   // const [users, setUsers] = useState<User[]>([]);
@@ -156,11 +188,11 @@ export default function UserPage() {
           <Box flex="1">
             <QuestionCard
               id={e.id}
-              user_name={e.user_name}
+              user={e.user}
               title={e.title}
               content={e.content}
               is_anonymous={e.is_anonymous}
-              created_ad={e.created_ad}
+              created_at={e.created_at}
               likes={e.likes}
               bookmarks={e.bookmarks}
               isLiked={e.isLiked}
@@ -173,7 +205,7 @@ export default function UserPage() {
           </Box>
 
           {/* ボタン部分 (自分の質問のみ表示) */}
-          {e.user_id === user.id && (
+          {e.user.id === user.id && (
             <Box display="flex" gap="8px" ml={4}>
               <Button
                 size="sm"
@@ -223,7 +255,7 @@ export default function UserPage() {
     switch (tabIndex) {
       case 0:
         // 自分の質問
-        filtered = questions.filter((q) => q.user_id === user.id);
+        filtered = questions.filter((q) => q.user.id === user.id);
         break;
       case 1:
         // いいねした質問
@@ -246,9 +278,9 @@ export default function UserPage() {
         keywords.every(
           (keyword) =>
             q.title.toLowerCase().includes(keyword) ||
-            q.user_name.toLowerCase().includes(keyword) ||
+            q.user.display_name.toLowerCase().includes(keyword) ||
             q.content.toLowerCase().includes(keyword) ||
-            q.tags.some((tag) => tag.toLowerCase().includes(keyword))
+            q.tags.some((tag) => tag.name.toLowerCase().includes(keyword))
         )
       );
     }
@@ -299,7 +331,7 @@ export default function UserPage() {
   return (
     <>
       <Head>
-        <title>User Page - {user.name}</title>
+        <title>User Page - {user.display_name}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ContentsWithHeader>
@@ -439,11 +471,10 @@ export default function UserPage() {
                   h="100px"
                   borderRadius="full"
                   bg="gray.300"
-                  bgImage={`url(${user.avatar})`}
                   bgSize="cover"
                 />
                 <Text fontSize="lg" color="white">
-                  {user.name}
+                  {user.display_name}
                 </Text>
                 <Text fontSize="sm" color="gray.400">
                   {user.bio}

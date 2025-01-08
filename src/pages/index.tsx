@@ -17,7 +17,6 @@ export default function Home() {
       <Center h="100vh">
         <VStack>
           <ShowTableMessage />
-          {/* <BackButton/> */}
           <LoginButton />
         </VStack>
       </Center>

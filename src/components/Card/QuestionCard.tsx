@@ -1,4 +1,5 @@
 import { Tag as TagModel } from "@/types/tag";
+import { User } from "@/types/user";
 import {
   Box,
   HStack,
@@ -39,7 +40,7 @@ function getColor(tagId: number): string {
 
 type QuestionCardProps = {
   id: number;
-  user_name: string;
+  user: User;
   title: string;
   content: string;
   is_anonymous: boolean;
@@ -66,7 +67,7 @@ function truncateContent(content: string): string {
 export function QuestionCard(props: QuestionCardProps) {
   const {
     title,
-    user_name,
+    user,
     content,
     is_anonymous,
     created_at,
@@ -101,7 +102,7 @@ export function QuestionCard(props: QuestionCardProps) {
         <Box onClick={onClick}>
           {/* ユーザー名 */}
           <Text fontSize="sm" color="gray.500">
-            投稿者: {is_anonymous ? "匿名" : user_name}
+            投稿者: {is_anonymous ? "匿名" : user.display_name}
           </Text>
 
           {/* 投稿時刻 */}

@@ -65,6 +65,8 @@ export default function Home() {
     "習慣",
     "研究",
     "勉強",
+    "Python",
+    "SQLAlchemy",
   ];
 
   // タグクリックで検索
@@ -172,7 +174,11 @@ export default function Home() {
   return (
     <>
       {/* モーダルの定義 */}
-      <QuestionPostModal isOpen={isPostOpen} onClose={onPostClose} />
+      <QuestionPostModal
+        isOpen={isPostOpen}
+        onClose={onPostClose}
+        handleGet={handleGet}
+      />
       <Head>
         <title>Query</title>
         <link rel="icon" href="/favicon.ico" />
@@ -181,7 +187,7 @@ export default function Home() {
         <SimpleGrid
           columns={10}
           gap={4}
-          height="100vh"
+          // height="100vh"
           width="100%"
           px={4}
           bg="white"
@@ -210,7 +216,7 @@ export default function Home() {
                       >
                         <QuestionCard
                           id={e.id}
-                          user_name={e.user.display_name}
+                          user={e.user}
                           title={e.title}
                           content={e.content}
                           is_anonymous={e.is_anonymous}
@@ -334,7 +340,8 @@ export default function Home() {
                 variant="solid"
                 aria-label="Post Question"
                 position="absolute"
-                top="80%"
+                top="70%"
+                left="25%"
                 colorScheme="teal" // ボタンのカラーを変更
                 size="lg" // ボタンサイズ
                 borderRadius="lg" // 角を丸く

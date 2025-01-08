@@ -35,7 +35,7 @@ export function AnswerPostModal({ isOpen, onClose }: Props) {
 
   // 仮の表示名を設定
   //  const userDisplayName = "Faker";
-  const userDisplayName = null; // 表示名がない状態に変更
+  const userDisplayName = "faker"; // 表示名がない状態に変更
 
   // 投稿者名を設定する処理
   useEffect(() => {
