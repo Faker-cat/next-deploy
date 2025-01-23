@@ -1,3 +1,4 @@
+import supabase from "@/libs/supabase";
 import {
   Box,
   Button,
@@ -11,9 +12,11 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -24,12 +27,48 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   // 仮のデフォルト値（本来はユーザー情報を受け取るべき）
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
+  const toast = useToast();
 
-  const handleSave = () => {
-    // 保存処理をここに追加 (例: APIコール)
-    console.log("プロフィール更新", { name, bio });
-    onClose();
-  };
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSave() {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      const url =
+        process.env.NEXT_PUBLIC_API_URL + `/users/${data.session?.user.id}`;
+      const profile = {
+        display_name: name,
+        bio: bio,
+      };
+      const res = await axios.put(url, profile);
+      // handleGet();
+      toast({
+        title: "Your profile has been updated!",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Failed to update your profile",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+      onClose();
+    }
+  }
+
+  useEffect(() => {
+    if (!isOpen) {
+      setName("");
+      setBio("");
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -79,7 +118,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               </FormLabel>
               <Input
                 type="text"
-                placeholder="自己紹介を書いてね"
+                placeholder="自己紹介を書いてください"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 focusBorderColor="teal.400"
@@ -97,6 +136,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
             fontSize="md"
             fontWeight="medium"
             onClick={handleSave}
+            isLoading={isLoading}
           >
             Save Changes
           </Button>
