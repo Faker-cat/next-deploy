@@ -64,7 +64,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               </FormLabel>
               <Input
                 type="text"
-                placeholder="Enter your name"
+                placeholder="名前をいれてください"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 focusBorderColor="teal.400"
@@ -79,7 +79,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               </FormLabel>
               <Input
                 type="text"
-                placeholder="Write something about yourself"
+                placeholder="自己紹介を書いてね"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 focusBorderColor="teal.400"

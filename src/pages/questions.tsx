@@ -60,11 +60,13 @@ export default function Home() {
 
   const recommendedTags = [
     "JavaScript",
-    "Backend",
-    "健康",
-    "習慣",
-    "研究",
-    "勉強",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Chakra UI",
+    "CSS",
+    "HTML",
+    "Node.js",
     "Python",
     "SQLAlchemy",
   ];
@@ -256,7 +258,7 @@ export default function Home() {
             top="105px"
             right="0"
             width={{ base: "100%", md: "20%" }} /* 画面幅の2割 */
-            height="100vh"
+            height="85vh"
             zIndex={10}
             bg="#253045"
             boxShadow="md"
@@ -340,7 +342,7 @@ export default function Home() {
                 variant="solid"
                 aria-label="Post Question"
                 position="absolute"
-                top="70%"
+                top="80%"
                 left="25%"
                 colorScheme="teal" // ボタンのカラーを変更
                 size="lg" // ボタンサイズ

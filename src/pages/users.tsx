@@ -3,6 +3,7 @@ import { QuestionCard } from "@/components/Card/QuestionCard";
 import ProfileModal from "@/components/Modal/ProfileModal";
 import QuestionDeleteModal from "@/components/Modal/QuestionDeleteModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
+import supabase from "@/libs/supabase";
 import { Question } from "@/types/question";
 import { User } from "@/types/user";
 import {
@@ -24,6 +25,7 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
+import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -37,113 +39,136 @@ export default function UserPage() {
   } = useDisclosure();
 
   // サンプルデータ（現在のユーザーの質問のみ）
-  const [questions, setQuestions] = useState<Question[]>([
-    {
-      id: 1,
-      user: {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        display_name: "Faker",
-        bio: "あいうえお",
-        created_at: "2024-1-8",
-      },
-      title: "EXAMPLE",
-      content:
-        "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。まだ百字じゃないの？まだ？あいうえお",
-      is_anonymous: false,
-      created_at: "2024-12-11",
-      likes: 10,
-      bookmarks: 5,
-      isLiked: true,
-      isBookmarked: false,
-      tags: [
-        {
-          id: 1,
-          name: "web",
-        },
-        {
-          id: 2,
-          name: "fastapi",
-        },
-      ],
-    },
-    {
-      id: 2,
-      user: {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa7",
-        display_name: "eto",
-        bio: "かきくけこ",
-        created_at: "2024-1-8",
-      },
-      title: "Another Question",
-      content:
-        "Here's another example question with a moderate length content.",
-      is_anonymous: false,
-      created_at: "2024-12-10",
-      likes: 3,
-      bookmarks: 2,
-      isLiked: true,
-      isBookmarked: false,
-      tags: [
-        {
-          id: 3,
-          name: "next",
-        },
-      ],
-    },
-    {
-      id: 3,
-      user: {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa8",
-        display_name: "davis",
-        bio: "さしすせそ",
-        created_at: "2024-1-8",
-      },
-      title: "質問例！",
-      content: "この質問をブックマークした質問に表示したい",
-      is_anonymous: false,
-      created_at: "2024-12-15",
-      likes: 3,
-      bookmarks: 2,
-      isLiked: false,
-      isBookmarked: true,
-      tags: [
-        {
-          id: 4,
-          name: "web",
-        },
-      ],
-    },
-  ]);
+  // const [questions, setQuestions] = useState<Question[]>([
+  //   {
+  //     id: 1,
+  //     user: {
+  //       id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  //       display_name: "Faker",
+  //       bio: "あいうえお",
+  //       created_at: "2024-1-8",
+  //     },
+  //     title: "EXAMPLE",
+  //     content:
+  //       "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。まだ百字じゃないの？まだ？あいうえお",
+  //     is_anonymous: false,
+  //     created_at: "2024-12-11",
+  //     likes: 10,
+  //     bookmarks: 5,
+  //     isLiked: true,
+  //     isBookmarked: false,
+  //     tags: [
+  //       {
+  //         id: 1,
+  //         name: "web",
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "fastapi",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: 2,
+  //     user: {
+  //       id: "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+  //       display_name: "eto",
+  //       bio: "かきくけこ",
+  //       created_at: "2024-1-8",
+  //     },
+  //     title: "Another Question",
+  //     content:
+  //       "Here's another example question with a moderate length content.",
+  //     is_anonymous: false,
+  //     created_at: "2024-12-10",
+  //     likes: 3,
+  //     bookmarks: 2,
+  //     isLiked: true,
+  //     isBookmarked: false,
+  //     tags: [
+  //       {
+  //         id: 3,
+  //         name: "next",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: 3,
+  //     user: {
+  //       id: "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+  //       display_name: "davis",
+  //       bio: "さしすせそ",
+  //       created_at: "2024-1-8",
+  //     },
+  //     title: "質問例！",
+  //     content: "この質問をブックマークした質問に表示したい",
+  //     is_anonymous: false,
+  //     created_at: "2024-12-15",
+  //     likes: 3,
+  //     bookmarks: 2,
+  //     isLiked: false,
+  //     isBookmarked: true,
+  //     tags: [
+  //       {
+  //         id: 4,
+  //         name: "web",
+  //       },
+  //     ],
+  //   },
+  // ]);
 
   // ユーザー情報
-  const user: User = {
-    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    display_name: "Faker",
-    bio: "Web developer, React enthusiast.",
-    created_at: "2024-12-15",
-  };
+  // const user: User = {
+  //   id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  //   display_name: "Faker",
+  //   bio: "Webアプリケーション開発むずかしい...",
+  //   created_at: "2024-12-15",
+  // };
 
-  // const [users, setUsers] = useState<User[]>([]);
+  const [user, setUser] = useState<User>();
+  const [questions, setQuestions] = useState<Question[]>([]);
 
-  //  async function handleGet() {
-  //    try {
-  //      const url = process.env.NEXT_PUBLIC_API_URL + "/users/{id}/users";
-  //      const res = await axios.get(url);
-  //      if (res.status !== 200) {
-  //        throw new Error("Failed to fetch questions");
-  //      }
-  //      setQuestions(res.data as Question[]);
-  //    } catch (err) {
-  //      console.error(err);
-  //    }
-  //  }
+  async function GetUser() {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      const url =
+        process.env.NEXT_PUBLIC_API_URL + `/users/${data.session?.user.id}`;
+      const res = await axios.get(url);
+      if (res.status !== 200) {
+        throw new Error("Failed to fetch questions");
+      }
+      setUser(res.data as User);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
-  //  useEffect(() => {
-  //    const init = async () => {
-  //      await handleGet();
-  //    };
-  //    init();
-  //  }, []);
+  useEffect(() => {
+    const init = async () => {
+      await GetUser();
+    };
+    init();
+  }, []);
+
+  async function handleGet() {
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + "/questions";
+      const res = await axios.get(url);
+      if (res.status !== 200) {
+        throw new Error("Failed to fetch questions");
+      }
+      setQuestions(res.data as Question[]);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    const init = async () => {
+      await handleGet();
+    };
+    init();
+  }, []);
 
   // 検索状態管理
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -205,7 +230,7 @@ export default function UserPage() {
           </Box>
 
           {/* ボタン部分 (自分の質問のみ表示) */}
-          {e.user.id === user.id && (
+          {e.user.id === user?.id && (
             <Box display="flex" gap="8px" ml={4}>
               <Button
                 size="sm"
@@ -255,7 +280,7 @@ export default function UserPage() {
     switch (tabIndex) {
       case 0:
         // 自分の質問
-        filtered = questions.filter((q) => q.user.id === user.id);
+        filtered = questions.filter((q) => q.user.id === user?.id);
         break;
       case 1:
         // いいねした質問
@@ -331,7 +356,7 @@ export default function UserPage() {
   return (
     <>
       <Head>
-        <title>User Page - {user.display_name}</title>
+        <title>User Page - {user?.display_name}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ContentsWithHeader>
@@ -474,10 +499,10 @@ export default function UserPage() {
                   bgSize="cover"
                 />
                 <Text fontSize="lg" color="white">
-                  {user.display_name}
+                  {user?.display_name}
                 </Text>
                 <Text fontSize="sm" color="gray.400">
-                  {user.bio}
+                  {user?.bio}
                 </Text>
               </VStack>
 

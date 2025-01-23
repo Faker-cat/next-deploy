@@ -5,6 +5,7 @@ import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import { Answer } from "@/types/answer";
 import { Question } from "@/types/question";
 import { Box, Button, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -23,59 +24,50 @@ export default function QuestionDetails() {
     if (query.id) {
       const questionId = parseInt(query.id as string, 10);
 
-      // サンプルデータ
-      const sampleQuestion: Question = {
-        id: questionId,
-        title: "EXAMPLE",
-        user: {
-          id: "489bee16-570f-bec6-b058-b9f1a262f641",
-          display_name: "faker",
-          bio: "aaa",
-          created_at: "2024-12-11",
-        },
-        content:
-          "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。",
-        is_anonymous: true,
-        created_at: "2024-12-11",
-        likes: 10,
-        bookmarks: 5,
-        isLiked: false,
-        isBookmarked: false,
-        tags: [
-          {
-            id: 1,
-            name: "Python",
-          },
-          {
-            id: 2,
-            name: "SQLAlchemy",
-          },
-        ],
-      };
+      async function QuestionGet() {
+        try {
+          // const { data, error } = await supabase.auth.getSession();
 
-      const sampleAnswers: Answer[] = [
-        {
-          id: 1,
-          user_name: "eto",
-          content: "これは回答の例です。",
-          created_ad: "2024-12-12",
-          likes: 3,
-          isLiked: false,
-        },
-        {
-          id: 2,
-          user_name: "davis",
-          content: "別の回答例です。",
-          created_ad: "2024-12-13",
-          likes: 5,
-          isLiked: true,
-        },
-      ];
+          const url = `${process.env.NEXT_PUBLIC_API_URL}/questions/${questionId}`;
+          const res = await axios.get(url);
+          if (res.status !== 200) {
+            throw new Error("Failed to fetch questions");
+          }
+          setQuestion(res.data as Question);
+        } catch (err) {
+          console.error(err);
+        }
+      }
 
-      setQuestion(sampleQuestion);
-      setAnswers(sampleAnswers);
+      useEffect(() => {
+        const init = async () => {
+          await QuestionGet();
+        };
+        init();
+      }, []);
+
+      async function AnswerGet() {
+        try {
+          const url = `${process.env.NEXT_PUBLIC_API_URL}/answers/${questionId}`;
+          const res = await axios.get(url);
+          if (res.status !== 200) {
+            throw new Error("Failed to fetch questions");
+          }
+          setQuestion(res.data as Question);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      useEffect(() => {
+        const init = async () => {
+          await QuestionGet();
+        };
+        init();
+      }, []);
     }
-  }, [query.id]);
+    [query.id];
+  });
 
   if (!question) {
     return <Text>Loading...</Text>;
