@@ -5,13 +5,16 @@ import { Question } from "@/types/question";
 import {
   Box,
   Button,
+  Center,
   GridItem,
   Input,
   InputGroup,
   InputRightElement,
   SimpleGrid,
+  Spinner,
   Tag,
   Text,
+  VStack,
   Wrap,
   WrapItem,
   useDisclosure,
@@ -30,9 +33,11 @@ export default function Home() {
   } = useDisclosure();
 
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // ローディング状態の追加
 
   async function handleGet() {
     try {
+      setIsLoading(true); // ローディングを開始
       const url = process.env.NEXT_PUBLIC_API_URL + "/questions";
       const res = await axios.get(url);
       if (res.status !== 200) {
@@ -41,6 +46,8 @@ export default function Home() {
       setQuestions(res.data as Question[]);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false); // ローディングを終了
     }
   }
 
@@ -203,7 +210,22 @@ export default function Home() {
               boxShadow="md"
               borderRadius="md"
             >
-              {filteredQuestions.length > 0 ? (
+              {isLoading ? ( // ローディング状態を確認
+                <Center w="100%" h="50vh">
+                  <VStack spacing={4}>
+                    <Spinner
+                      thickness="4px"
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      color="orange.500"
+                      size="xl"
+                    />
+                    <Text fontSize="lg" fontWeight="medium" color="gray.600">
+                      Loading questions...
+                    </Text>
+                  </VStack>
+                </Center>
+              ) : filteredQuestions.length > 0 ? (
                 <Wrap spacing="16px" justify="flex-start">
                   {filteredQuestions.map((e) => (
                     <WrapItem key={e.id} flexBasis="100%">
@@ -241,7 +263,7 @@ export default function Home() {
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
-                  height="100%" // 高さを全体に設定
+                  height="100%"
                 >
                   <Text color="gray.500" textAlign="center" fontSize="lg">
                     検索結果が見つかりません。

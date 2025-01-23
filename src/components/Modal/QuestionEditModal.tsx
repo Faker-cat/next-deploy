@@ -1,3 +1,4 @@
+import { Tag } from "@/types/tag";
 import {
   Button,
   FormControl,
@@ -19,24 +20,37 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { MultiSelect, Option } from "chakra-multiselect";
+import axios from "axios";
+import { MultiSelect } from "chakra-multiselect";
 import { useEffect, useState } from "react";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   handleGet: () => void;
-
   userDisplayName?: string;
+  questionId: string;
+  userId: string;
 }
 
-export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
+interface Option {
+  label: string;
+  value: string | number;
+}
+
+export function QuestionEditModal({
+  isOpen,
+  onClose,
+  handleGet,
+  questionId,
+  userId,
+}: Props) {
   const [title, setTitle] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [author, setAuthor] = useState("匿名");
   const [body, setBody] = useState("");
-  const [tags, setTags] = useState<Option[]>([]); // 修正: Option[] 型に変更
-  const [newTag, setNewTag] = useState("");
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Option[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
@@ -44,87 +58,91 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
   const maxBodyLength = 500;
   const maxTags = 5;
 
-  const userDisplayName = "Faker";
-
   useEffect(() => {
-    if (userDisplayName) {
-      setAuthor(userDisplayName);
-      setIsAnonymous(false);
-    } else {
-      setAuthor("匿名");
-      setIsAnonymous(true);
+    async function fetchQuestionData() {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/questions/${userId}/${questionId}`;
+        const res = await axios.get(url);
+        if (res.status === 200) {
+          const { title, content, is_anonymous, tags } = res.data;
+          setTitle(title);
+          setBody(content);
+          setIsAnonymous(is_anonymous);
+          setSelectedTags(
+            tags.map((tag: Tag) => ({
+              label: tag.name,
+              value: tag.id.toString(),
+            }))
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        toast({
+          title: "Failed to fetch question data",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
     }
-  }, [userDisplayName]);
 
-  const handleSubmit = () => {
+    async function fetchTags() {
+      try {
+        const url = process.env.NEXT_PUBLIC_API_URL + "/tags";
+        const res = await axios.get(url);
+        if (res.status === 200) {
+          setTags(res.data as Tag[]);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    if (isOpen) {
+      fetchQuestionData();
+      fetchTags();
+    } else {
+      setTitle("");
+      setBody("");
+      setSelectedTags([]);
+    }
+  }, [isOpen, questionId, userId]);
+
+  async function handleEdit() {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/questions/${userId}/${questionId}`;
+      const payload = {
+        title,
+        is_anonymous: isAnonymous,
+        content: body,
+      };
+      const res = await axios.put(url, payload);
+
+      if (res.status === 200) {
+        handleGet();
+        toast({
+          title: "Question updated successfully!",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+        onClose();
+      } else {
+        throw new Error("Failed to update question");
+      }
+    } catch (err) {
+      console.error(err);
       toast({
-        title: "Your question has been posted",
-        status: "success",
+        title: "Failed to update question",
+        status: "error",
         duration: 2000,
         isClosable: true,
       });
-      onClose();
-    }, 1000);
-  };
-
-  useEffect(() => {
-    if (!isOpen) {
-      setTitle("");
-      setIsAnonymous(true);
-      setAuthor("匿名");
-      setBody("");
-      setTags([]);
-      setNewTag("");
+    } finally {
+      setIsLoading(false);
     }
-  }, [isOpen]);
-
-  const resetTitle = () => {
-    setTitle("");
-  };
-
-  const options = [
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Next.js",
-    "Chakra UI",
-    "CSS",
-    "HTML",
-    "Node.js",
-  ].map((tag) => ({
-    label: tag,
-    value: tag,
-  }));
-
-  // async function handlePost() {
-  //   setIsLoading(true);
-  //   try {
-  //     const url = process.env.NEXT_PUBLIC_API_URL + "/questions";
-  //     const question = {title:title,is_anonymous:isAnonymous,content:body,tag_id:};
-  //     const res = await axios.post(url, question);
-  //     handleGet();
-  //     toast({
-  //       title: "Item added !",
-  //       status: "success",
-  //       duration: 2000,
-  //       isClosable: true,
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast({
-  //       title: "Failed to add item",
-  //       status: "error",
-  //       duration: 2000,
-  //       isClosable: true,
-  //     });
-  //   } finally {
-  //     setIsLoading(false);
-  //     onClose();
-  //   }
-  // }
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -142,20 +160,15 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="タイトルを入力"
+                  placeholder="Enter a title"
                   maxLength={maxTitleLength}
                 />
                 <InputRightElement>
                   <Button
                     size="sm"
-                    height="2rem"
-                    minWidth="2rem"
+                    onClick={() => setTitle("")}
                     bg="transparent"
-                    color="gray.500"
-                    fontSize="1.2rem"
                     _hover={{ bg: "transparent", color: "gray.700" }}
-                    _active={{ bg: "transparent", color: "gray.900" }}
-                    onClick={resetTitle}
                   >
                     ×
                   </Button>
@@ -171,32 +184,12 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
 
             <FormControl>
               <FormLabel>Author</FormLabel>
-              <HStack spacing={4} align="center">
-                <Text fontSize="md" color="gray.700">
-                  {isAnonymous ? "匿名" : author}
-                </Text>
+              <HStack>
+                <Text>{isAnonymous ? "匿名" : author}</Text>
                 <Switch
-                  colorScheme="teal"
                   isChecked={!isAnonymous}
-                  onChange={() => {
-                    // if (userDisplayName === null) {
-                    //   toast({
-                    //     title: "ユーザー名が設定されていません",
-                    //     description:
-                    //       "User Pageにてユーザー名を設定してください。",
-                    //     status: "warning",
-                    //     duration: 3000,
-                    //     isClosable: true,
-                    //   });
-                    //   return;
-                    // }
-                    setIsAnonymous(!isAnonymous);
-                    setAuthor(isAnonymous ? userDisplayName || "匿名" : "");
-                  }}
+                  onChange={() => setIsAnonymous(!isAnonymous)}
                 />
-                <Text fontSize="sm" color="gray.500">
-                  {isAnonymous ? "匿名で投稿" : "表示名で投稿"}
-                </Text>
               </HStack>
             </FormControl>
 
@@ -205,7 +198,7 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
               <Textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                placeholder="質問の内容を入力"
+                placeholder="Enter question details"
                 maxLength={maxBodyLength}
               />
               <Text
@@ -219,16 +212,17 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
             <FormControl>
               <FormLabel>Tags</FormLabel>
               <MultiSelect
-                options={options}
-                value={tags}
+                options={tags.map((tag) => ({
+                  label: tag.name,
+                  value: tag.id.toString(),
+                }))}
+                value={selectedTags}
                 onChange={(value) =>
-                  setTags(Array.isArray(value) ? value : [value])
+                  setSelectedTags(Array.isArray(value) ? value : [value])
                 }
-                placeholder="タグを選択"
-                // closeOnSelect={false}
               />
               <Text fontSize="sm" color="gray.500">
-                {tags.length}/{maxTags} tags selected
+                {selectedTags.length}/{maxTags} tags selected
               </Text>
             </FormControl>
           </VStack>
@@ -236,17 +230,16 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
         <ModalFooter>
           <Button
             colorScheme="blue"
-            onClick={handleSubmit}
+            onClick={handleEdit}
             isLoading={isLoading}
             isDisabled={
               !title.trim() ||
               !body.trim() ||
               title.length > maxTitleLength ||
-              body.length > maxBodyLength ||
-              (!isAnonymous && !author.trim())
+              body.length > maxBodyLength
             }
           >
-            Post！
+            Save Changes
           </Button>
         </ModalFooter>
       </ModalContent>

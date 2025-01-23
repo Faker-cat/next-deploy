@@ -1,3 +1,5 @@
+import supabase from "@/libs/supabase";
+import { User } from "@/types/user";
 import {
   Button,
   FormControl,
@@ -16,37 +18,41 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  fetchQuestionAndAnswers: () => void;
+
   userDisplayName?: string; // 表示名のプロパティ
 }
 
-export function AnswerPostModal({ isOpen, onClose }: Props) {
+export function AnswerPostModal({
+  isOpen,
+  onClose,
+  fetchQuestionAndAnswers,
+}: Props) {
   const [body, setBody] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [author, setAuthor] = useState("匿名");
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const [user, setUser] = useState<User>();
 
   const maxBodyLength = 500;
 
-  // 仮の表示名を設定
-  //  const userDisplayName = "Faker";
-  const userDisplayName = "faker"; // 表示名がない状態に変更
-
   // 投稿者名を設定する処理
-  useEffect(() => {
-    if (userDisplayName) {
-      setAuthor(userDisplayName);
-      setIsAnonymous(false); // 表示名があれば匿名ではない
-    } else {
-      setAuthor("匿名");
-      setIsAnonymous(true); // 表示名がない場合は匿名
-    }
-  }, [userDisplayName]);
+  // useEffect(() => {
+  //   if (userDisplayName) {
+  //     setAuthor(userDisplayName);
+  //     setIsAnonymous(false); // 表示名があれば匿名ではない
+  //   } else {
+  //     setAuthor("匿名");
+  //     setIsAnonymous(true); // 表示名がない場合は匿名
+  //   }
+  // }, [userDisplayName]);
 
   const handleSubmit = () => {
     setIsLoading(true);
@@ -70,7 +76,56 @@ export function AnswerPostModal({ isOpen, onClose }: Props) {
       setIsAnonymous(true);
       setAuthor("匿名");
     }
+
+    if (isOpen) GetUser();
   }, [isOpen]);
+
+  async function handlePost() {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      const url = process.env.NEXT_PUBLIC_API_URL + "/answers";
+      const answer = {
+        user_id: data.session?.user.id,
+        is_anonymous: isAnonymous,
+        content: body,
+      };
+      const res = await axios.post(url, answer);
+      fetchQuestionAndAnswers();
+      toast({
+        title: "Your answer has been posted!",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Failed to add your answer",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+      onClose();
+    }
+  }
+
+  async function GetUser() {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      const url =
+        process.env.NEXT_PUBLIC_API_URL + `/users/${data.session?.user.id}`;
+      const res = await axios.get(url);
+      if (res.status !== 200) {
+        throw new Error("Failed to fetch answers");
+      }
+      setUser(res.data as User);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -93,7 +148,7 @@ export function AnswerPostModal({ isOpen, onClose }: Props) {
                   isChecked={!isAnonymous}
                   onChange={() => {
                     // userDisplayNameがnullの場合はトーストを表示
-                    if (userDisplayName === null) {
+                    if (user?.display_name === null) {
                       toast({
                         title: "ユーザー名が設定されていません",
                         description:
@@ -112,7 +167,7 @@ export function AnswerPostModal({ isOpen, onClose }: Props) {
                     // userDisplayNameがnullでない場合、状態を切り替え
                     setIsAnonymous(!isAnonymous);
                     if (isAnonymous) {
-                      setAuthor(userDisplayName || "匿名"); // 表示名がある場合にそれを設定
+                      setAuthor(user?.display_name || "匿名"); // 表示名がある場合にそれを設定
                     } else {
                       setAuthor(""); // 表示名を切り替える
                     }
@@ -126,7 +181,7 @@ export function AnswerPostModal({ isOpen, onClose }: Props) {
             </FormControl>
 
             <FormControl isInvalid={body.length > maxBodyLength}>
-              <FormLabel>Answer</FormLabel>
+              <FormLabel>Content</FormLabel>
               <Textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
@@ -145,7 +200,7 @@ export function AnswerPostModal({ isOpen, onClose }: Props) {
         <ModalFooter>
           <Button
             colorScheme="blue"
-            onClick={handleSubmit}
+            onClick={handlePost}
             isLoading={isLoading}
             isDisabled={!body.trim() || body.length > maxBodyLength}
           >

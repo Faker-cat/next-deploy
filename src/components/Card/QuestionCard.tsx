@@ -11,6 +11,7 @@ import {
   Wrap,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
+import { format } from "date-fns"; // date-fnsライブラリを使う場合
 import { FaBookmark, FaHeart, FaRegBookmark, FaRegHeart } from "react-icons/fa";
 
 // ポップアニメーションのキーフレーム
@@ -64,6 +65,12 @@ function truncateContent(content: string): string {
   return content;
 }
 
+function formatDate(date: string): string {
+  const parsedDate = new Date(date);
+  // 日付のフォーマット（例：2025年1月24日 15:30）
+  return format(parsedDate, "yyyy年MM月dd日 HH:mm");
+}
+
 export function QuestionCard(props: QuestionCardProps) {
   const {
     title,
@@ -107,7 +114,7 @@ export function QuestionCard(props: QuestionCardProps) {
 
           {/* 投稿時刻 */}
           <Text fontSize="xs" color="gray.400">
-            投稿日時: {created_at}
+            投稿日時: {formatDate(created_at)} {/* フォーマットされた日時 */}
           </Text>
 
           {/* 本文 */}

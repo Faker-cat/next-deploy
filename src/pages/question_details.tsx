@@ -4,7 +4,15 @@ import { AnswerPostModal } from "@/components/Modal/AnswerPostModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import { Answer } from "@/types/answer";
 import { Question } from "@/types/question";
-import { Box, Button, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Spinner,
+  Text,
+  useDisclosure,
+  VStack,
+} from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -20,115 +28,119 @@ export default function QuestionDetails() {
     onClose: onPostClose,
   } = useDisclosure();
 
-  useEffect(() => {
+  // 質問と回答を取得する関数
+  const fetchQuestionAndAnswers = async () => {
     if (query.id) {
       const questionId = parseInt(query.id as string, 10);
-
-      async function QuestionGet() {
-        try {
-          // const { data, error } = await supabase.auth.getSession();
-
-          const url = `${process.env.NEXT_PUBLIC_API_URL}/questions/${questionId}`;
-          const res = await axios.get(url);
-          if (res.status !== 200) {
-            throw new Error("Failed to fetch questions");
-          }
-          setQuestion(res.data as Question);
-        } catch (err) {
-          console.error(err);
+      try {
+        // 質問の詳細を取得
+        const questionRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/questions/${questionId}`
+        );
+        if (questionRes.status === 200) {
+          setQuestion(questionRes.data as Question);
+        } else {
+          throw new Error("Failed to fetch question details");
         }
-      }
 
-      useEffect(() => {
-        const init = async () => {
-          await QuestionGet();
-        };
-        init();
-      }, []);
-
-      async function AnswerGet() {
-        try {
-          const url = `${process.env.NEXT_PUBLIC_API_URL}/answers/${questionId}`;
-          const res = await axios.get(url);
-          if (res.status !== 200) {
-            throw new Error("Failed to fetch questions");
-          }
-          setQuestion(res.data as Question);
-        } catch (err) {
-          console.error(err);
+        // 回答の一覧を取得
+        const answersRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/answers/${questionId}`
+        );
+        if (answersRes.status === 200) {
+          setAnswers(answersRes.data as Answer[]);
+        } else {
+          throw new Error("Failed to fetch answers");
         }
+      } catch (err) {
+        console.error(err);
       }
-
-      useEffect(() => {
-        const init = async () => {
-          await QuestionGet();
-        };
-        init();
-      }, []);
     }
-    [query.id];
-  });
+  };
+
+  // 質問と回答の取得をuseEffectで実行
+  useEffect(() => {
+    fetchQuestionAndAnswers();
+  }, [query.id]);
 
   if (!question) {
-    return <Text>Loading...</Text>;
+    return (
+      <Center w="100%" h="100vh">
+        <VStack spacing={4}>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="orange.500"
+            size="xl"
+          />
+          <Text fontSize="lg" fontWeight="medium" color="gray.600">
+            Loading question details...
+          </Text>
+        </VStack>
+      </Center>
+    );
   }
 
   return (
     <ContentsWithHeader>
-      <Box p={4}>
+      <Box p={4} w="100%" maxW="1200px" mx="auto">
         {/* 質問カード */}
-        <DetailsQuestionCard
-          question={question}
-          onToggleLike={() =>
-            setQuestion((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    likes: prev.isLiked ? prev.likes - 1 : prev.likes + 1,
-                    isLiked: !prev.isLiked,
-                  }
-                : null
-            )
-          }
-          onToggleBookmark={() =>
-            setQuestion((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    bookmarks: prev.isBookmarked
-                      ? prev.bookmarks - 1
-                      : prev.bookmarks + 1,
-                    isBookmarked: !prev.isBookmarked,
-                  }
-                : null
-            )
-          }
-        />
+        <Box w="100%" mb={8}>
+          <DetailsQuestionCard
+            question={question}
+            onToggleLike={() =>
+              setQuestion((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      likes: prev.isLiked ? prev.likes - 1 : prev.likes + 1,
+                      isLiked: !prev.isLiked,
+                    }
+                  : null
+              )
+            }
+            onToggleBookmark={() =>
+              setQuestion((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      bookmarks: prev.isBookmarked
+                        ? prev.bookmarks - 1
+                        : prev.bookmarks + 1,
+                      isBookmarked: !prev.isBookmarked,
+                    }
+                  : null
+              )
+            }
+          />
+        </Box>
 
         {/* 回答セクション */}
-        <VStack spacing={4} align="stretch" mt={8}>
+        <VStack spacing={4} align="stretch" w="100%">
           <Text fontSize="xl" fontWeight="bold">
             Answers
           </Text>
           {answers.length > 0 ? (
             answers.map((answer) => (
-              <AnswerCard
-                key={answer.id}
-                {...answer}
-                onToggleLike={() =>
-                  setAnswers((prev) =>
-                    prev.map((a) =>
-                      a.id === answer.id
-                        ? {
-                            ...a,
-                            likes: a.isLiked ? a.likes - 1 : a.likes + 1,
-                            isLiked: !a.isLiked,
-                          }
-                        : a
+              <Box key={answer.id} w="100%">
+                <AnswerCard
+                  {...answer}
+                  onToggleLike={() =>
+                    setAnswers((prev) =>
+                      prev.map((a) =>
+                        a.id === answer.id
+                          ? {
+                              ...a,
+                              likes: a.isLiked ? a.likes - 1 : a.likes + 1,
+                              isLiked: !a.isLiked,
+                            }
+                          : a
+                      )
                     )
-                  )
-                }
-              />
+                  }
+                />
+              </Box>
             ))
           ) : (
             <Text color="gray.500" textAlign="center">
@@ -139,7 +151,11 @@ export default function QuestionDetails() {
       </Box>
 
       {/* モーダルの定義 */}
-      <AnswerPostModal isOpen={isPostOpen} onClose={onPostClose} />
+      <AnswerPostModal
+        isOpen={isPostOpen}
+        onClose={onPostClose}
+        fetchQuestionAndAnswers={fetchQuestionAndAnswers}
+      />
 
       {/* 回答投稿ボタン */}
       <Button

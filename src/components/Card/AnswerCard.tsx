@@ -1,5 +1,6 @@
 import { Box, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
+import { format } from "date-fns";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 // ポップアニメーション
@@ -12,16 +13,26 @@ const popAnimation = keyframes`
 type AnswerCardProps = {
   user_name: string;
   content: string;
-  created_ad: string;
+  created_at: string;
   likes: number;
   isLiked: boolean;
   onToggleLike: () => void;
 };
 
+function formatDate(date: string): string {
+  const parsedDate = new Date(date);
+  // 日付が無効な場合
+  if (isNaN(parsedDate.getTime())) {
+    return "無効な日付";
+  }
+  // 日付のフォーマット（例：2025年1月24日 15:30）
+  return format(parsedDate, "yyyy年MM月dd日 HH:mm");
+}
+
 export function AnswerCard({
   user_name,
   content,
-  created_ad,
+  created_at,
   likes,
   isLiked,
   onToggleLike,
@@ -36,7 +47,7 @@ export function AnswerCard({
 
         {/* 投稿時刻 */}
         <Text fontSize="xs" color="gray.400">
-          投稿日時: {created_ad}
+          投稿日時: {formatDate(created_at)}
         </Text>
 
         {/* 本文 */}

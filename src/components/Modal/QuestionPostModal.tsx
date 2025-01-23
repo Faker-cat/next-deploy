@@ -245,7 +245,7 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
               <Textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                placeholder="質問の内容を入力"
+                placeholder="質問の内容を入力してください"
                 maxLength={maxBodyLength}
               />
               <Text

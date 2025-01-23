@@ -9,6 +9,7 @@ import {
   Wrap,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
+import { format } from "date-fns";
 import { FaBookmark, FaHeart, FaRegBookmark, FaRegHeart } from "react-icons/fa";
 import { Question } from "../../types/question";
 
@@ -43,6 +44,12 @@ type QuestionCardProps = {
   onToggleBookmark: (e: React.MouseEvent) => void; // ブックマーク切り替え関数（イベントを受け取る）
 };
 
+function formatDate(date: string): string {
+  const parsedDate = new Date(date);
+  // 日付のフォーマット（例：2025年1月24日 15:30）
+  return format(parsedDate, "yyyy年MM月dd日 HH:mm");
+}
+
 export function DetailsQuestionCard(props: QuestionCardProps) {
   const { question, onToggleLike, onToggleBookmark } = props;
 
@@ -71,7 +78,7 @@ export function DetailsQuestionCard(props: QuestionCardProps) {
             {question.is_anonymous ? "匿名" : question.user.display_name}
           </Text>
           <Text fontSize="xs" color="gray.400">
-            投稿日時: {question.created_at}
+            投稿日時:{formatDate(question.created_at)}
           </Text>
         </Box>
 
