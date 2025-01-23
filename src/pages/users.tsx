@@ -548,7 +548,11 @@ export default function UserPage() {
       </ContentsWithHeader>
 
       {/* モーダルの定義 */}
-      <ProfileModal isOpen={isProfileOpen} onClose={onProfileClose} />
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={onProfileClose}
+        GetUser={GetUser}
+      />
       {/* 削除確認モーダル */}
       <QuestionDeleteModal
         isOpen={isDeleteModalOpen}

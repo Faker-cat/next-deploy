@@ -21,9 +21,14 @@ import React, { useEffect, useState } from "react";
 interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
+  GetUser: () => void;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({
+  isOpen,
+  onClose,
+  GetUser,
+}) => {
   // 仮のデフォルト値（本来はユーザー情報を受け取るべき）
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
@@ -42,7 +47,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
         bio: bio,
       };
       const res = await axios.put(url, profile);
-      // handleGet();
+      GetUser();
+
       toast({
         title: "Your profile has been updated!",
         status: "success",
