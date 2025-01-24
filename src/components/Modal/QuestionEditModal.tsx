@@ -25,7 +25,7 @@ const QuestionEditModal: React.FC<QuestionEditModalProps> = ({
   isOpen,
   onClose,
   questionId,
-  getQuestions,
+  // getQuestions,
 }) => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
