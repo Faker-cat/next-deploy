@@ -56,30 +56,30 @@ const QuestionEditModal: React.FC<QuestionEditModalProps> = ({
   }, [questionId, toast]);
 
   // 編集処理
-  const handleSubmit = async () => {
-    if (questionId === null) return;
+  // const handleSubmit = async () => {
+  //   if (questionId === null) return;
 
-    try {
-      await axios.put(`/api/questions/${questionId}`, { title, content });
-      toast({
-        title: "Question updated.",
-        description: "Your question has been updated successfully.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      getQuestions(); // 質問を再取得
-      onClose(); // モーダルを閉じる
-    } catch (error) {
-      toast({
-        title: "Error updating question.",
-        description: "There was an error updating your question.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
+  //   try {
+  //     await axios.put(`/api/questions/${questionId}`, { title, content });
+  //     toast({
+  //       title: "Question updated.",
+  //       description: "Your question has been updated successfully.",
+  //       status: "success",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //     getQuestions(); // 質問を再取得
+  //     onClose(); // モーダルを閉じる
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error updating question.",
+  //       description: "There was an error updating your question.",
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   }
+  // };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -106,9 +106,8 @@ const QuestionEditModal: React.FC<QuestionEditModalProps> = ({
           <Button variant="outline" mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button colorScheme="teal" onClick={handleSubmit}>
-            Save
-          </Button>
+          {/* <Button colorScheme="teal" onClick={handleSubmit}> */}
+          <Button colorScheme="teal">Save</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
