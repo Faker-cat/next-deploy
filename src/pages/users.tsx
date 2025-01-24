@@ -544,7 +544,7 @@ export default function UserPage() {
         onClose={onProfileClose}
         GetUser={GetUser}
       />
-      // QuestionEditModal の定義
+      {/* QuestionEditModal の定義 */}
       <QuestionEditModal
         isOpen={isEditModalOpen}
         onClose={onEditModalClose}
