@@ -66,16 +66,16 @@ export default function Home() {
   const [activeTags, setActiveTags] = useState<string[]>([]); // 現在選択されたタグ
 
   const recommendedTags = [
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Next.js",
-    "Chakra UI",
-    "CSS",
-    "HTML",
-    "Node.js",
-    "Python",
-    "SQLAlchemy",
+    "授業",
+    "研究",
+    "就活",
+    "アルバイト",
+    "趣味",
+    "ライフハック",
+    "健康",
+    "映画・テレビ",
+    "旅行",
+    "テクノロジー",
   ];
 
   // タグクリックで検索
