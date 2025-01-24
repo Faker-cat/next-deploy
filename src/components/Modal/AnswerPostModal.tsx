@@ -54,20 +54,20 @@ export function AnswerPostModal({
   //   }
   // }, [userDisplayName]);
 
-  const handleSubmit = () => {
-    setIsLoading(true);
-    // ここに送信処理を実装
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Your answer has been posted",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      });
-      onClose(); // モーダル閉じる
-    }, 1000);
-  };
+  // const handleSubmit = () => {
+  //   setIsLoading(true);
+  //   // ここに送信処理を実装
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //     toast({
+  //       title: "Your answer has been posted",
+  //       status: "success",
+  //       duration: 2000,
+  //       isClosable: true,
+  //     });
+  //     onClose(); // モーダル閉じる
+  //   }, 1000);
+  // };
 
   // モーダルが閉じられる際に状態をリセットする
   useEffect(() => {
@@ -83,14 +83,14 @@ export function AnswerPostModal({
   async function handlePost() {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const url = process.env.NEXT_PUBLIC_API_URL + "/answers";
       const answer = {
         user_id: data.session?.user.id,
         is_anonymous: isAnonymous,
         content: body,
       };
-      const res = await axios.post(url, answer);
+      await axios.post(url, answer);
       fetchQuestionAndAnswers();
       toast({
         title: "Your answer has been posted!",
@@ -114,7 +114,7 @@ export function AnswerPostModal({
 
   async function GetUser() {
     try {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const url =
         process.env.NEXT_PUBLIC_API_URL + `/users/${data.session?.user.id}`;
       const res = await axios.get(url);
