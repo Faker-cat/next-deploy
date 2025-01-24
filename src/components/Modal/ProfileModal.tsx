@@ -29,7 +29,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   onClose,
   GetUser,
 }) => {
-  // 仮のデフォルト値（本来はユーザー情報を受け取るべき）
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const toast = useToast();

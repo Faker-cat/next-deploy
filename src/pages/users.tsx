@@ -2,7 +2,7 @@ import { LogoutButton } from "@/components/Buttons/LogoutButton";
 import { QuestionCard } from "@/components/Card/QuestionCard";
 import ProfileModal from "@/components/Modal/ProfileModal";
 import QuestionDeleteModal from "@/components/Modal/QuestionDeleteModal";
-// import { QuestionEditModal } from "@/components/Modal/QuestionEditModal";
+import { QuestionEditModal } from "@/components/Modal/QuestionEditModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import supabase from "@/libs/supabase";
 import { Question } from "@/types/question";
@@ -96,12 +96,12 @@ export default function UserPage() {
   //   useState<Question[]>(questions);
 
   //質問を編集
-  // const [editTargetId, setEditTargetId] = useState<number | null>(null);
-  // const {
-  //   isOpen: isEditModalOpen,
-  //   onOpen: onEditModalOpen,
-  //   onClose: onEditModalClose,
-  // } = useDisclosure();
+  const [editTargetId, setEditTargetId] = useState<number | null>(null);
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose,
+  } = useDisclosure();
 
   // 削除対象の質問 ID を管理するステートを追加
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
@@ -165,8 +165,8 @@ export default function UserPage() {
                 colorScheme="teal"
                 variant="outline"
                 onClick={() => {
-                  // setEditTargetId(e.id); // 削除対象を設定
-                  // onEditModalOpen(); // モーダルを開く
+                  setEditTargetId(e.id); // 削除対象を設定
+                  onEditModalOpen(); // モーダルを開く
                 }}
               >
                 Edit
@@ -277,6 +277,10 @@ export default function UserPage() {
           : q
       )
     );
+  };
+
+  const getEditTargetQuestion = () => {
+    return questions.find((q) => q.id === editTargetId);
   };
 
   // 質問の詳細ページへ遷移する関数
@@ -534,21 +538,22 @@ export default function UserPage() {
           </GridItem>
         </SimpleGrid>
       </ContentsWithHeader>
-
       {/* Profileモーダルの定義 */}
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={onProfileClose}
         GetUser={GetUser}
       />
-      {/* Editモーダルの定義 */}
-      {/* <QuestionEditModal
+      // QuestionEditModal の定義
+      <QuestionEditModal
         isOpen={isEditModalOpen}
         onClose={onEditModalClose}
-        // questionId={editTargetId}
-        handleGet={handleGet} // 質問リストを更新する関数
-      /> */}
-
+        initialTitle={getEditTargetQuestion()?.title || ""}
+        initialAuthor={getEditTargetQuestion()?.user.display_name || ""}
+        initialContent={getEditTargetQuestion()?.content || ""}
+        questionId={editTargetId}
+        handleGet={handleGet}
+      />
       {/* 削除確認モーダル */}
       <QuestionDeleteModal
         isOpen={isDeleteModalOpen}
@@ -557,6 +562,8 @@ export default function UserPage() {
           onDeleteModalClose();
         }}
         onConfirm={confirmDelete}
+        deleteTargetId={deleteTargetId}
+        handleGet={handleGet}
       />
     </>
   );

@@ -1,3 +1,4 @@
+import supabase from "@/libs/supabase";
 import {
   Button,
   Modal,
@@ -8,35 +9,57 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useToast,
 } from "@chakra-ui/react";
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 
 type QuestionDeleteModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  handleGet: () => void;
+  deleteTargetId: number | null;
 };
-
-// const handleSubmit = () => {
-//   setIsLoading(true);
-//   // ここに送信処理を実装
-//   setTimeout(() => {
-//     setIsLoading(false);
-//     toast({
-//       title: "Your question has been posted",
-//       status: "success",
-//       duration: 2000,
-//       isClosable: true,
-//     });
-//     onClose(); // モーダル閉じる
-//   }, 1000);
-// };
 
 const QuestionDeleteModal: React.FC<QuestionDeleteModalProps> = ({
   isOpen,
   onClose,
-  onConfirm,
+  handleGet,
+  deleteTargetId,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
+
+  async function DeleteQuestion() {
+    try {
+      const { data } = await supabase.auth.getSession();
+      setIsLoading(true);
+
+      const url =
+        process.env.NEXT_PUBLIC_API_URL +
+        `/questions/${data.session?.user.id}/${deleteTargetId}`;
+      await axios.delete(url);
+      handleGet();
+      toast({
+        title: "User deleted !",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Failed to delete user",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    setIsLoading(false);
+    onClose();
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -50,7 +73,11 @@ const QuestionDeleteModal: React.FC<QuestionDeleteModalProps> = ({
           <Button variant="outline" colorScheme="gray" mr={3} onClick={onClose}>
             cancel
           </Button>
-          <Button colorScheme="red" onClick={onConfirm}>
+          <Button
+            colorScheme="red"
+            onClick={DeleteQuestion}
+            isLoading={isLoading}
+          >
             DELETE
           </Button>
         </ModalFooter>

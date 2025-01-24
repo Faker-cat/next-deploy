@@ -54,18 +54,6 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
   const maxBodyLength = 500;
   const maxTags = 5;
 
-  // const userDisplayName = "Faker"
-
-  // useEffect(() => {
-  //   if (userDisplayName) {
-  //     setAuthor(userDisplayName);
-  //     setIsAnonymous(false);
-  //   } else {
-  //     setAuthor("匿名");
-  //     setIsAnonymous(true);
-  //   }
-  // }, [userDisplayName]);
-
   useEffect(() => {
     if (!isOpen) {
       setTitle("");
@@ -101,22 +89,6 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
   const resetTitle = () => {
     setTitle("");
   };
-
-  // const options = [
-  //   "JavaScript",
-  //   "TypeScript",
-  //   "React",
-  //   "Next.js",
-  //   "Chakra UI",
-  //   "CSS",
-  //   "HTML",
-  //   "Node.js",
-  //   "Python",
-  //   "SQLAlchemy",
-  // ].map((tag) => ({
-  //   label: tag,
-  //   value: tag,
-  // }));
 
   async function handlePost() {
     setIsLoading(true);
@@ -220,17 +192,6 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
                   colorScheme="teal"
                   isChecked={!isAnonymous}
                   onChange={() => {
-                    // if (userDisplayName === null) {
-                    //   toast({
-                    //     title: "ユーザー名が設定されていません",
-                    //     description:
-                    //       "User Pageにてユーザー名を設定してください。",
-                    //     status: "warning",
-                    //     duration: 3000,
-                    //     isClosable: true,
-                    //   });
-                    //   return;
-                    // }
                     setIsAnonymous(!isAnonymous);
                     setAuthor(isAnonymous ? user?.display_name || "匿名" : "");
                   }}
@@ -271,7 +232,6 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
                   setSelectedTags(Array.isArray(value) ? value : [value])
                 }
                 placeholder="タグを選択"
-                // closeOnSelect={false}
               />
               <Text fontSize="sm" color="gray.500">
                 {selectedTags.length}/{maxTags} tags selected
