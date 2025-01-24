@@ -93,7 +93,8 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
     }
 
     if (isOpen) {
-      GetTags(), GetUser();
+      GetTags();
+      GetUser();
     }
   }, [isOpen]);
 
@@ -101,26 +102,26 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
     setTitle("");
   };
 
-  const options = [
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Next.js",
-    "Chakra UI",
-    "CSS",
-    "HTML",
-    "Node.js",
-    "Python",
-    "SQLAlchemy",
-  ].map((tag) => ({
-    label: tag,
-    value: tag,
-  }));
+  // const options = [
+  //   "JavaScript",
+  //   "TypeScript",
+  //   "React",
+  //   "Next.js",
+  //   "Chakra UI",
+  //   "CSS",
+  //   "HTML",
+  //   "Node.js",
+  //   "Python",
+  //   "SQLAlchemy",
+  // ].map((tag) => ({
+  //   label: tag,
+  //   value: tag,
+  // }));
 
   async function handlePost() {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const url = process.env.NEXT_PUBLIC_API_URL + "/questions";
       const question = {
         title: title,
@@ -129,7 +130,7 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
         content: body,
         tag_id: selectedTags.map((tag) => tag.value),
       };
-      const res = await axios.post(url, question);
+      await axios.post(url, question);
       handleGet();
       toast({
         title: "Your question has been posted!",
@@ -153,7 +154,7 @@ export function QuestionPostModal({ isOpen, onClose, handleGet }: Props) {
 
   async function GetUser() {
     try {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const url =
         process.env.NEXT_PUBLIC_API_URL + `/users/${data.session?.user.id}`;
       const res = await axios.get(url);

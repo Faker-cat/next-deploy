@@ -23,7 +23,7 @@ export function Header() {
       /*背景色*/ color="white"
       py={5}
       /*上下のパディング*/ px={10} /*左右のパディング4px*10=40px*/
-      position="relative" ////////////////////////////////////////////////////////////////
+      position="relative"
     >
       <Flex justify="space-between" align="center">
         {/* アプリ名 */}

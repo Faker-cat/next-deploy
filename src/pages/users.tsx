@@ -2,6 +2,7 @@ import { LogoutButton } from "@/components/Buttons/LogoutButton";
 import { QuestionCard } from "@/components/Card/QuestionCard";
 import ProfileModal from "@/components/Modal/ProfileModal";
 import QuestionDeleteModal from "@/components/Modal/QuestionDeleteModal";
+// import { QuestionEditModal } from "@/components/Modal/QuestionEditModal";
 import { ContentsWithHeader } from "@/components/PageLayout/ContentsWithHeader";
 import supabase from "@/libs/supabase";
 import { Question } from "@/types/question";
@@ -38,99 +39,12 @@ export default function UserPage() {
     onClose: onProfileClose,
   } = useDisclosure();
 
-  // サンプルデータ（現在のユーザーの質問のみ）
-  // const [questions, setQuestions] = useState<Question[]>([
-  //   {
-  //     id: 1,
-  //     user: {
-  //       id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  //       display_name: "Faker",
-  //       bio: "あいうえお",
-  //       created_at: "2024-1-8",
-  //     },
-  //     title: "EXAMPLE",
-  //     content:
-  //       "この文章は、指定された文字数を超えるために作成された例文です。文章の長さが百字を超えるように調整し、内容としては何かしらの意味が通るようにしています。まだ百字じゃないの？まだ？あいうえお",
-  //     is_anonymous: false,
-  //     created_at: "2024-12-11",
-  //     likes: 10,
-  //     bookmarks: 5,
-  //     isLiked: true,
-  //     isBookmarked: false,
-  //     tags: [
-  //       {
-  //         id: 1,
-  //         name: "web",
-  //       },
-  //       {
-  //         id: 2,
-  //         name: "fastapi",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     user: {
-  //       id: "3fa85f64-5717-4562-b3fc-2c963f66afa7",
-  //       display_name: "eto",
-  //       bio: "かきくけこ",
-  //       created_at: "2024-1-8",
-  //     },
-  //     title: "Another Question",
-  //     content:
-  //       "Here's another example question with a moderate length content.",
-  //     is_anonymous: false,
-  //     created_at: "2024-12-10",
-  //     likes: 3,
-  //     bookmarks: 2,
-  //     isLiked: true,
-  //     isBookmarked: false,
-  //     tags: [
-  //       {
-  //         id: 3,
-  //         name: "next",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     user: {
-  //       id: "3fa85f64-5717-4562-b3fc-2c963f66afa8",
-  //       display_name: "davis",
-  //       bio: "さしすせそ",
-  //       created_at: "2024-1-8",
-  //     },
-  //     title: "質問例！",
-  //     content: "この質問をブックマークした質問に表示したい",
-  //     is_anonymous: false,
-  //     created_at: "2024-12-15",
-  //     likes: 3,
-  //     bookmarks: 2,
-  //     isLiked: false,
-  //     isBookmarked: true,
-  //     tags: [
-  //       {
-  //         id: 4,
-  //         name: "web",
-  //       },
-  //     ],
-  //   },
-  // ]);
-
-  // ユーザー情報
-  // const user: User = {
-  //   id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  //   display_name: "Faker",
-  //   bio: "Webアプリケーション開発むずかしい...",
-  //   created_at: "2024-12-15",
-  // };
-
   const [user, setUser] = useState<User>();
   const [questions, setQuestions] = useState<Question[]>([]);
 
   async function GetUser() {
     try {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const url =
         process.env.NEXT_PUBLIC_API_URL + `/users/${data.session?.user.id}`;
       const res = await axios.get(url);
@@ -174,6 +88,14 @@ export default function UserPage() {
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [filteredQuestions, setFilteredQuestions] =
     useState<Question[]>(questions);
+
+  //質問を編集
+  const [editTargetId, setEditTargetId] = useState<number | null>(null);
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose,
+  } = useDisclosure();
 
   // 削除対象の質問 ID を管理するステートを追加
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
@@ -236,7 +158,10 @@ export default function UserPage() {
                 size="sm"
                 colorScheme="teal"
                 variant="outline"
-                onClick={() => handleEditQuestion(e.id)}
+                onClick={() => {
+                  setEditTargetId(e.id); // 削除対象を設定
+                  onEditModalOpen(); // モーダルを開く
+                }}
               >
                 Edit
               </Button>
@@ -547,12 +472,20 @@ export default function UserPage() {
         </SimpleGrid>
       </ContentsWithHeader>
 
-      {/* モーダルの定義 */}
+      {/* Profileモーダルの定義 */}
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={onProfileClose}
         GetUser={GetUser}
       />
+      {/* Editモーダルの定義 */}
+      {/* <QuestionEditModal
+        isOpen={isEditModalOpen}
+        onClose={onEditModalClose}
+        // questionId={editTargetId}
+        handleGet={handleGet} // 質問リストを更新する関数
+      /> */}
+
       {/* 削除確認モーダル */}
       <QuestionDeleteModal
         isOpen={isDeleteModalOpen}

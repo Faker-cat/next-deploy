@@ -1,12 +1,6 @@
-import { Tag } from "@/types/tag";
 import {
   Button,
-  FormControl,
-  FormLabel,
-  HStack,
   Input,
-  InputGroup,
-  InputRightElement,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,235 +8,111 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Switch,
-  Text,
   Textarea,
   useToast,
-  VStack,
 } from "@chakra-ui/react";
-import axios from "axios";
-import { MultiSelect } from "chakra-multiselect";
+import axios from "axios"; // axiosのインポート
 import { useEffect, useState } from "react";
 
-interface Props {
+interface QuestionEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  handleGet: () => void;
-  userDisplayName?: string;
-  questionId: string;
-  userId: string;
+  questionId: number | null;
+  getQuestions: () => void;
 }
 
-interface Option {
-  label: string;
-  value: string | number;
-}
-
-export function QuestionEditModal({
+const QuestionEditModal: React.FC<QuestionEditModalProps> = ({
   isOpen,
   onClose,
-  handleGet,
   questionId,
-  userId,
-}: Props) {
-  const [title, setTitle] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(true);
-  const [author, setAuthor] = useState("匿名");
-  const [body, setBody] = useState("");
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [selectedTags, setSelectedTags] = useState<Option[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  getQuestions,
+}) => {
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const toast = useToast();
 
-  const maxTitleLength = 50;
-  const maxBodyLength = 500;
-  const maxTags = 5;
-
+  // 質問の詳細を取得
   useEffect(() => {
-    async function fetchQuestionData() {
+    if (questionId === null) return;
+
+    const fetchQuestion = async () => {
       try {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/questions/${userId}/${questionId}`;
-        const res = await axios.get(url);
-        if (res.status === 200) {
-          const { title, content, is_anonymous, tags } = res.data;
-          setTitle(title);
-          setBody(content);
-          setIsAnonymous(is_anonymous);
-          setSelectedTags(
-            tags.map((tag: Tag) => ({
-              label: tag.name,
-              value: tag.id.toString(),
-            }))
-          );
-        }
-      } catch (err) {
-        console.error(err);
+        const res = await axios.get(`/api/questions/${questionId}`);
+        setTitle(res.data.title);
+        setContent(res.data.content);
+      } catch (error) {
+        console.error("Failed to fetch question details:", error);
         toast({
-          title: "Failed to fetch question data",
+          title: "Error",
+          description: "Failed to load question details.",
           status: "error",
-          duration: 2000,
+          duration: 3000,
           isClosable: true,
         });
       }
-    }
+    };
 
-    async function fetchTags() {
-      try {
-        const url = process.env.NEXT_PUBLIC_API_URL + "/tags";
-        const res = await axios.get(url);
-        if (res.status === 200) {
-          setTags(res.data as Tag[]);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
+    fetchQuestion();
+  }, [questionId, toast]);
 
-    if (isOpen) {
-      fetchQuestionData();
-      fetchTags();
-    } else {
-      setTitle("");
-      setBody("");
-      setSelectedTags([]);
-    }
-  }, [isOpen, questionId, userId]);
+  // 編集処理
+  const handleSubmit = async () => {
+    if (questionId === null) return;
 
-  async function handleEdit() {
-    setIsLoading(true);
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/questions/${userId}/${questionId}`;
-      const payload = {
-        title,
-        is_anonymous: isAnonymous,
-        content: body,
-      };
-      const res = await axios.put(url, payload);
-
-      if (res.status === 200) {
-        handleGet();
-        toast({
-          title: "Question updated successfully!",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-        onClose();
-      } else {
-        throw new Error("Failed to update question");
-      }
-    } catch (err) {
-      console.error(err);
+      await axios.put(`/api/questions/${questionId}`, { title, content });
       toast({
-        title: "Failed to update question",
-        status: "error",
-        duration: 2000,
+        title: "Question updated.",
+        description: "Your question has been updated successfully.",
+        status: "success",
+        duration: 3000,
         isClosable: true,
       });
-    } finally {
-      setIsLoading(false);
+      getQuestions(); // 質問を再取得
+      onClose(); // モーダルを閉じる
+    } catch (error) {
+      toast({
+        title: "Error updating question.",
+        description: "There was an error updating your question.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
-  }
+  };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent maxW="55%" minW="450px">
-        <ModalHeader>Edit a Question</ModalHeader>
+      <ModalContent>
+        <ModalHeader>Edit Question</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <VStack align="start" spacing={4}>
-            <FormControl
-              isInvalid={title.length > maxTitleLength || !title.trim()}
-            >
-              <FormLabel>Title</FormLabel>
-              <InputGroup>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter a title"
-                  maxLength={maxTitleLength}
-                />
-                <InputRightElement>
-                  <Button
-                    size="sm"
-                    onClick={() => setTitle("")}
-                    bg="transparent"
-                    _hover={{ bg: "transparent", color: "gray.700" }}
-                  >
-                    ×
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
-              <Text
-                fontSize="sm"
-                color={title.length > maxTitleLength ? "red.500" : "gray.500"}
-              >
-                {title.length}/{maxTitleLength}
-              </Text>
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Author</FormLabel>
-              <HStack>
-                <Text>{isAnonymous ? "匿名" : author}</Text>
-                <Switch
-                  isChecked={!isAnonymous}
-                  onChange={() => setIsAnonymous(!isAnonymous)}
-                />
-              </HStack>
-            </FormControl>
-
-            <FormControl isInvalid={body.length > maxBodyLength}>
-              <FormLabel>Content</FormLabel>
-              <Textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder="Enter question details"
-                maxLength={maxBodyLength}
-              />
-              <Text
-                fontSize="sm"
-                color={body.length > maxBodyLength ? "red.500" : "gray.500"}
-              >
-                {body.length}/{maxBodyLength}
-              </Text>
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Tags</FormLabel>
-              <MultiSelect
-                options={tags.map((tag) => ({
-                  label: tag.name,
-                  value: tag.id.toString(),
-                }))}
-                value={selectedTags}
-                onChange={(value) =>
-                  setSelectedTags(Array.isArray(value) ? value : [value])
-                }
-              />
-              <Text fontSize="sm" color="gray.500">
-                {selectedTags.length}/{maxTags} tags selected
-              </Text>
-            </FormControl>
-          </VStack>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Question title"
+            mb={4}
+          />
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Question content"
+            mb={4}
+            rows={6}
+          />
         </ModalBody>
         <ModalFooter>
-          <Button
-            colorScheme="blue"
-            onClick={handleEdit}
-            isLoading={isLoading}
-            isDisabled={
-              !title.trim() ||
-              !body.trim() ||
-              title.length > maxTitleLength ||
-              body.length > maxBodyLength
-            }
-          >
-            Save Changes
+          <Button variant="outline" mr={3} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button colorScheme="teal" onClick={handleSubmit}>
+            Save
           </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
   );
-}
+};
+
+export default QuestionEditModal;

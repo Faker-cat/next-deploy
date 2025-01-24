@@ -39,14 +39,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   async function handleSave() {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const url =
         process.env.NEXT_PUBLIC_API_URL + `/users/${data.session?.user.id}`;
       const profile = {
         display_name: name,
         bio: bio,
       };
-      const res = await axios.put(url, profile);
+      await axios.put(url, profile);
       GetUser();
 
       toast({
