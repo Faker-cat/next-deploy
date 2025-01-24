@@ -25,6 +25,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   fetchQuestionAndAnswers: () => void;
+  questionId: number;
 
   userDisplayName?: string; // 表示名のプロパティ
 }
@@ -33,6 +34,7 @@ export function AnswerPostModal({
   isOpen,
   onClose,
   fetchQuestionAndAnswers,
+  questionId,
 }: Props) {
   const [body, setBody] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(true);
@@ -86,10 +88,13 @@ export function AnswerPostModal({
       const { data } = await supabase.auth.getSession();
       const url = process.env.NEXT_PUBLIC_API_URL + "/answers";
       const answer = {
+        question_id: questionId,
         user_id: data.session?.user.id,
         is_anonymous: isAnonymous,
         content: body,
       };
+
+      console.log("Sending answer data:", answer); // データを確認
       await axios.post(url, answer);
       fetchQuestionAndAnswers();
       toast({

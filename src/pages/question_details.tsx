@@ -155,6 +155,7 @@ export default function QuestionDetails() {
         isOpen={isPostOpen}
         onClose={onPostClose}
         fetchQuestionAndAnswers={fetchQuestionAndAnswers}
+        questionId={question.id} // ここでquestionIdを渡す
       />
 
       {/* 回答投稿ボタン */}
