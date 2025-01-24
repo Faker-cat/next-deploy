@@ -94,7 +94,7 @@ export function AnswerPostModal({
         content: body,
       };
 
-      console.log("Sending answer data:", answer); // データを確認
+      // console.log("Sending answer data:", answer); // データを確認
       await axios.post(url, answer);
       fetchQuestionAndAnswers();
       toast({

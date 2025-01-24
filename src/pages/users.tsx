@@ -10,11 +10,13 @@ import { User } from "@/types/user";
 import {
   Box,
   Button,
+  Center,
   GridItem,
   Input,
   InputGroup,
   InputRightElement,
   SimpleGrid,
+  Spinner,
   Tab,
   TabList,
   TabPanel,
@@ -41,6 +43,7 @@ export default function UserPage() {
 
   const [user, setUser] = useState<User>();
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // ローディング状態の追加
 
   async function GetUser() {
     try {
@@ -66,6 +69,7 @@ export default function UserPage() {
 
   async function handleGet() {
     try {
+      setIsLoading(true); // ローディングを開始
       const url = process.env.NEXT_PUBLIC_API_URL + "/questions";
       const res = await axios.get(url);
       if (res.status !== 200) {
@@ -74,6 +78,8 @@ export default function UserPage() {
       setQuestions(res.data as Question[]);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false); // ローディングを終了
     }
   }
 
@@ -342,7 +348,26 @@ export default function UserPage() {
                 <TabPanels>
                   {/* 自分の質問 */}
                   <TabPanel>
-                    {getFilteredQuestions(0).length > 0 ? (
+                    {isLoading ? (
+                      <Center w="100%" h="50vh">
+                        <VStack spacing={4}>
+                          <Spinner
+                            thickness="4px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
+                            color="orange.500"
+                            size="xl"
+                          />
+                          <Text
+                            fontSize="lg"
+                            fontWeight="medium"
+                            color="gray.600"
+                          >
+                            Loading questions...
+                          </Text>
+                        </VStack>
+                      </Center>
+                    ) : getFilteredQuestions(0).length > 0 ? (
                       <Wrap spacing="16px" justify="flex-start">
                         {renderQuestionCards(getFilteredQuestions(0))}
                       </Wrap>
@@ -363,7 +388,26 @@ export default function UserPage() {
 
                   {/* いいねした質問 */}
                   <TabPanel>
-                    {getFilteredQuestions(1).length > 0 ? (
+                    {isLoading ? (
+                      <Center w="100%" h="50vh">
+                        <VStack spacing={4}>
+                          <Spinner
+                            thickness="4px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
+                            color="orange.500"
+                            size="xl"
+                          />
+                          <Text
+                            fontSize="lg"
+                            fontWeight="medium"
+                            color="gray.600"
+                          >
+                            Loading liked questions...
+                          </Text>
+                        </VStack>
+                      </Center>
+                    ) : getFilteredQuestions(1).length > 0 ? (
                       <Wrap spacing="16px" justify="flex-start">
                         {renderQuestionCards(getFilteredQuestions(1))}
                       </Wrap>
@@ -383,7 +427,26 @@ export default function UserPage() {
 
                   {/* ブックマークした質問 */}
                   <TabPanel>
-                    {getFilteredQuestions(2).length > 0 ? (
+                    {isLoading ? (
+                      <Center w="100%" h="50vh">
+                        <VStack spacing={4}>
+                          <Spinner
+                            thickness="4px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
+                            color="orange.500"
+                            size="xl"
+                          />
+                          <Text
+                            fontSize="lg"
+                            fontWeight="medium"
+                            color="gray.600"
+                          >
+                            Loading bookmarked questions...
+                          </Text>
+                        </VStack>
+                      </Center>
+                    ) : getFilteredQuestions(2).length > 0 ? (
                       <Wrap spacing="16px" justify="flex-start">
                         {renderQuestionCards(getFilteredQuestions(2))}
                       </Wrap>
