@@ -86,16 +86,16 @@ export default function UserPage() {
 
   // 検索状態管理
   const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const [filteredQuestions, setFilteredQuestions] =
-    useState<Question[]>(questions);
+  // const [filteredQuestions, setFilteredQuestions] =
+  //   useState<Question[]>(questions);
 
   //質問を編集
-  const [editTargetId, setEditTargetId] = useState<number | null>(null);
-  const {
-    isOpen: isEditModalOpen,
-    onOpen: onEditModalOpen,
-    onClose: onEditModalClose,
-  } = useDisclosure();
+  // const [editTargetId, setEditTargetId] = useState<number | null>(null);
+  // const {
+  //   isOpen: isEditModalOpen,
+  //   onOpen: onEditModalOpen,
+  //   onClose: onEditModalClose,
+  // } = useDisclosure();
 
   // 削除対象の質問 ID を管理するステートを追加
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
@@ -159,8 +159,8 @@ export default function UserPage() {
                 colorScheme="teal"
                 variant="outline"
                 onClick={() => {
-                  setEditTargetId(e.id); // 削除対象を設定
-                  onEditModalOpen(); // モーダルを開く
+                  // setEditTargetId(e.id); // 削除対象を設定
+                  // onEditModalOpen(); // モーダルを開く
                 }}
               >
                 Edit
@@ -183,17 +183,17 @@ export default function UserPage() {
     ));
   };
 
-  const handleEditQuestion = (id: number) => {
-    // 編集処理（例: モーダルを表示）
-    alert(`Editing question ID: ${id}`);
-  };
+  // const handleEditQuestion = (id: number) => {
+  //   // 編集処理（例: モーダルを表示）
+  //   alert(`Editing question ID: ${id}`);
+  // };
 
-  const handleDeleteQuestion = (id: number) => {
-    // 削除処理
-    if (confirm("Are you sure you want to delete this question?")) {
-      setQuestions((prev) => prev.filter((q) => q.id !== id));
-    }
-  };
+  // const handleDeleteQuestion = (id: number) => {
+  //   // 削除処理
+  //   if (confirm("Are you sure you want to delete this question?")) {
+  //     setQuestions((prev) => prev.filter((q) => q.id !== id));
+  //   }
+  // };
 
   // タブで選択された質問の管理
   const [selectedTab, setSelectedTab] = useState(0);
@@ -239,9 +239,9 @@ export default function UserPage() {
   };
 
   // 検索処理のuseEffect
-  useEffect(() => {
-    setFilteredQuestions(getFilteredQuestions(selectedTab));
-  }, [searchKeyword, selectedTab, questions]);
+  // useEffect(() => {
+  //   setFilteredQuestions(getFilteredQuestions(selectedTab));
+  // }, [searchKeyword, selectedTab, questions]);
 
   // いいねの切り替え処理
   const toggleLike = (id: number) => {
@@ -274,9 +274,9 @@ export default function UserPage() {
   };
 
   // 質問の詳細ページへ遷移する関数
-  const viewDetails = (id: number) => {
-    router.push(`/question_details?id=${id}`);
-  };
+  // const viewDetails = (id: number) => {
+  //   router.push(`/question_details?id=${id}`);
+  // };
 
   return (
     <>
