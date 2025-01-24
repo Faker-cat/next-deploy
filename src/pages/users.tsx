@@ -234,7 +234,8 @@ export default function UserPage() {
         keywords.every(
           (keyword) =>
             q.title.toLowerCase().includes(keyword) ||
-            q.user.display_name.toLowerCase().includes(keyword) ||
+            (!q.is_anonymous &&
+              q.user.display_name.toLowerCase().includes(keyword)) || // 匿名でない場合のみ投稿者名を検索
             q.content.toLowerCase().includes(keyword) ||
             q.tags.some((tag) => tag.name.toLowerCase().includes(keyword))
         )
